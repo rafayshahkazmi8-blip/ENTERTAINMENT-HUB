@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EntertainHub — Dark Pulse | Watch</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg-base: #07030e;
+      --bg-card: #120b1e;
+      --bg-card2: #1a1029;
+      --bg-hover: #231540;
+      --purple-main: #b77cff;
+      --purple-light: #d6aaff;
+      --purple-dark: #7c3aed;
+      --purple-dim: #441e6e;
+      --text-primary: #f0eaff;
+      --text-muted: #a896cc;
+      --border: rgba(157,78,221,0.3);
+      --border-bright: #b77cff;
+      --glow: rgba(183,124,255,0.4);
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg-base);
+      font-family: 'DM Sans', sans-serif;
+      color: var(--text-primary);
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: #130d1f; }
+    ::-webkit-scrollbar-thumb { background: var(--purple-main); border-radius: 10px; }
+
+    /* ===== ANIMATIONS ===== */
+    @keyframes glowPulse {
+      0%,100% { box-shadow: 0 0 10px var(--glow), 0 0 0 0 rgba(183,124,255,0); }
+      50% { box-shadow: 0 0 22px var(--glow), 0 0 40px rgba(183,124,255,0.15); }
+    }
+    @keyframes riseIn {
+      from { opacity:0; transform:translateY(24px); }
+      to { opacity:1; transform:translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity:0; } to { opacity:1; }
+    }
+    @keyframes scanline {
+      0% { transform:translateY(-100%); }
+      100% { transform:translateY(100vh); }
+    }
+    @keyframes shimmer {
+      0% { background-position:-600px 0; }
+      100% { background-position:600px 0; }
+    }
+    @keyframes floatY {
+      0%,100% { transform:translateY(0); }
+      50% { transform:translateY(-4px); }
+    }
+    @keyframes spinGlow {
+      0% { transform:rotate(0deg); }
+      100% { transform:rotate(360deg); }
+    }
+    @keyframes loadBar {
+      0% { width:0%; }
+      40% { width:60%; }
+      80% { width:85%; }
+      100% { width:100%; }
+    }
+
+    /* ===== NAVBAR ===== */
+    .navbar {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.9rem 2.5rem;
+      background: rgba(7,3,14,0.92);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800; font-size: 1.6rem;
+      background: linear-gradient(125deg, #d6aaff, #b77cff, #9d4edd);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      cursor: pointer; letter-spacing: -0.5px;
+      transition: transform 0.2s;
+    }
+    .logo:hover { transform: scale(1.03); }
+    .nav-links { display:flex; gap:1.8rem; align-items:center; }
+    .nav-links a {
+      color:#e2d6ff; text-decoration:none; font-weight:500; font-size:0.95rem;
+      position:relative; transition:0.2s;
+    }
+    .nav-links a::after {
+      content:''; position:absolute; bottom:-4px; left:0;
+      width:0; height:2px; background:var(--purple-main);
+      transition:width 0.3s; border-radius:2px;
+    }
+    .nav-links a:hover::after { width:100%; }
+    .nav-links a:hover { color:#fff; }
+    .contact-btn {
+      background: rgba(183,124,255,0.15) !important;
+      padding: 0.4rem 1.2rem; border-radius:40px;
+      border: 1px solid rgba(183,124,255,0.5);
+    }
+    .contact-btn:hover {
+      background: var(--purple-main) !important;
+      color: #0a060f !important;
+      box-shadow: 0 4px 14px var(--glow);
+    }
+    .contact-btn::after { display:none !important; }
+
+    /* ===== MAIN LAYOUT ===== */
+    .page-wrap {
+      max-width: 1500px; margin:0 auto;
+      padding: 2rem 2rem 0;
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      grid-template-rows: auto auto auto;
+      gap: 1.8rem;
+      animation: riseIn 0.6s ease both;
+    }
+
+    /* ===== PLAYER SECTION ===== */
+    .player-col { grid-column:1; grid-row:1; }
+
+    .player-container {
+      background: #000;
+      border-radius: 20px;
+      overflow: hidden;
+      position: relative;
+      border: 1px solid var(--border);
+      animation: glowPulse 4s ease infinite;
+    }
+
+    /* URL Input area */
+    .url-input-bar {
+      display: flex; gap: 0.8rem; align-items: center;
+      background: var(--bg-card);
+      padding: 1rem 1.2rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .url-input-bar input {
+      flex: 1;
+      background: rgba(10,5,20,0.9);
+      border: 1px solid #2f1e4a;
+      border-radius: 40px;
+      padding: 0.6rem 1rem;
+      color: var(--text-primary);
+      font-size: 0.9rem;
+      font-family: 'DM Sans', sans-serif;
+      transition: all 0.3s;
+    }
+    .url-input-bar input:focus {
+      outline: none;
+      border-color: var(--purple-main);
+      box-shadow: 0 0 0 3px rgba(183,124,255,0.2);
+      background: #1a0d30;
+    }
+    .url-input-bar input::placeholder { color: #6b5a8a; }
+    .play-btn {
+      background: linear-gradient(135deg, #9b4dff, #b77cff);
+      border: none; border-radius: 40px;
+      padding: 0.6rem 1.4rem;
+      color: #0a0518; font-weight: 700;
+      font-family: 'Syne', sans-serif;
+      font-size: 0.9rem; letter-spacing:0.3px;
+      display: flex; align-items: center; gap: 6px;
+      cursor: pointer; transition: all 0.25s;
+      white-space: nowrap;
+    }
+    .play-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 22px rgba(155,77,255,0.5);
+      background: linear-gradient(135deg, #b06eff, #ca9eff);
+    }
+    .play-btn-icon {
+      width: 20px; height: 20px;
+      background: rgba(10,5,20,0.4);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.65rem;
+    }
+
+    /* Video Frame */
+    .video-frame-wrap {
+      position: relative;
+      width: 100%;
+      padding-top: 56.25%; /* 16:9 */
+      background: #050010;
+    }
+    .video-frame-wrap iframe {
+      position: absolute;
+      inset: 0; width: 100%; height: 100%;
+      border: none;
+    }
+    /* Placeholder when no video */
+    .video-placeholder {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(ellipse at center, #1a0a2e 0%, #05020a 70%);
+      transition: opacity 0.4s;
+    }
+    .video-placeholder.hidden { opacity: 0; pointer-events: none; }
+    .placeholder-orb {
+      width: 90px; height: 90px;
+      border-radius: 50%;
+      border: 3px solid var(--purple-main);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.2rem;
+      position: relative;
+      animation: floatY 3s ease infinite, glowPulse 3s ease infinite;
+      cursor: pointer;
+      background: rgba(183,124,255,0.08);
+      transition: transform 0.25s, background 0.25s;
+    }
+    .placeholder-orb:hover {
+      transform: scale(1.12);
+      background: rgba(183,124,255,0.2);
+    }
+    .orb-ring {
+      position: absolute; inset: -10px;
+      border-radius: 50%;
+      border: 1px solid rgba(183,124,255,0.3);
+      animation: spinGlow 6s linear infinite;
+      border-top-color: var(--purple-main);
+    }
+    .placeholder-text {
+      margin-top: 1.4rem;
+      text-align: center;
+    }
+    .placeholder-text h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.1rem; color: var(--purple-light);
+    }
+    .placeholder-text p { font-size: 0.82rem; color: var(--text-muted); margin-top: 5px; }
+
+    /* ===== VIDEO INFO ===== */
+    .video-info {
+      padding: 1.2rem 0 0;
+    }
+    .video-title-row {
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem;
+    }
+    .video-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.4rem; font-weight: 700;
+      line-height: 1.3;
+      background: linear-gradient(to right, #f0eaff, #cbaaff);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .video-meta { display:flex; gap:1rem; align-items:center; margin-top:0.5rem; flex-wrap:wrap; }
+    .meta-badge {
+      background: var(--purple-dim);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 0.2rem 0.8rem;
+      font-size: 0.75rem; font-weight: 600;
+      color: var(--purple-light);
+    }
+    .meta-views { color: var(--text-muted); font-size: 0.82rem; }
+
+    /* Action bar */
+    .action-bar {
+      display: flex; gap: 0.8rem; margin-top: 1rem; flex-wrap: wrap;
+    }
+    .action-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 40px;
+      padding: 0.5rem 1.2rem;
+      color: var(--text-primary);
+      font-size: 0.85rem; font-weight: 500;
+      cursor: pointer;
+      display: flex; align-items: center; gap: 6px;
+      transition: all 0.25s;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .action-btn:hover {
+      border-color: var(--purple-main);
+      background: var(--bg-hover);
+      box-shadow: 0 4px 12px var(--glow);
+      transform: translateY(-1px);
+    }
+    .action-btn.active {
+      background: var(--purple-dim);
+      border-color: var(--purple-main);
+      color: var(--purple-light);
+    }
+
+    /* Description box */
+    .desc-box {
+      margin-top: 1rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1rem 1.2rem;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      transition: all 0.3s;
+    }
+    .desc-box:hover { border-color: var(--purple-main); }
+    .desc-toggle {
+      color: var(--purple-light);
+      cursor: pointer; font-size: 0.82rem;
+      margin-top: 6px; display: inline-block;
+    }
+    .desc-full { display: none; }
+    .desc-full.open { display: block; margin-top: 0.5rem; }
+
+    /* ===== SIDEBAR ===== */
+    .sidebar { grid-column:2; grid-row:1 / span 2; }
+
+    .sidebar-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.1rem; font-weight: 700;
+      border-left: 4px solid var(--purple-main);
+      padding-left: 0.8rem;
+      margin-bottom: 1rem;
+    }
+
+    .related-list { display:flex; flex-direction:column; gap:0.85rem; }
+
+    .related-card {
+      display: flex; gap: 0.8rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+    }
+    .related-card:hover {
+      border-color: var(--purple-main);
+      transform: translateX(4px);
+      background: var(--bg-hover);
+      box-shadow: 0 8px 24px -8px var(--glow);
+    }
+    .related-thumb {
+      width: 110px; flex-shrink: 0;
+      position: relative; overflow: hidden;
+    }
+    .related-thumb img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform 0.35s, filter 0.35s;
+    }
+    .related-card:hover .related-thumb img {
+      transform: scale(1.08);
+      filter: brightness(0.7) saturate(1.3);
+    }
+    .related-play-overlay {
+      position: absolute; inset:0;
+      display:flex; align-items:center; justify-content:center;
+      opacity:0; transition:opacity 0.25s;
+      background: rgba(0,0,0,0.35);
+    }
+    .related-card:hover .related-play-overlay { opacity:1; }
+    .mini-play {
+      width:32px; height:32px; border-radius:50%;
+      background: var(--purple-main);
+      display:flex; align-items:center; justify-content:center;
+      font-size:0.75rem;
+      box-shadow: 0 0 12px var(--glow);
+    }
+    .related-info { flex:1; padding:0.6rem 0.6rem 0.6rem 0; display:flex; flex-direction:column; justify-content:center; gap:4px; }
+    .related-title {
+      font-weight: 600; font-size: 0.85rem;
+      color: var(--text-primary);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      line-height: 1.3;
+    }
+    .related-badge {
+      background: #3a1966;
+      border-radius:12px;
+      padding: 0.15rem 0.5rem;
+      font-size: 0.68rem;
+      color: var(--purple-light);
+      font-weight: 600;
+      display: inline-block;
+      width: fit-content;
+    }
+    .related-genre { font-size: 0.72rem; color: var(--text-muted); }
+
+    /* ===== COMMENTS SECTION ===== */
+    .comments-col {
+      grid-column: 1; grid-row: 2;
+      padding-bottom: 2rem;
+    }
+    .comments-header {
+      display:flex; align-items:center; gap:1rem; margin-bottom:1.2rem;
+    }
+    .comments-header h3 {
+      font-family:'Syne',sans-serif; font-size:1.15rem;
+    }
+    .comment-count {
+      background: var(--purple-dim);
+      border-radius: 20px; padding: 0.15rem 0.7rem;
+      font-size: 0.75rem; color: var(--purple-light); font-weight:700;
+    }
+    .comment-input-row {
+      display:flex; gap:0.8rem; align-items:flex-start; margin-bottom:1.5rem;
+    }
+    .avatar-mini {
+      width:36px; height:36px; border-radius:50%;
+      background: linear-gradient(135deg, var(--purple-dark), var(--purple-main));
+      display:flex; align-items:center; justify-content:center;
+      font-size:0.85rem; flex-shrink:0; font-weight:700;
+    }
+    .comment-input {
+      flex:1;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius:12px;
+      padding: 0.7rem 1rem;
+      color: var(--text-primary);
+      font-family:'DM Sans',sans-serif; font-size:0.88rem;
+      resize:none; min-height:44px;
+      transition:all 0.3s;
+    }
+    .comment-input:focus {
+      outline:none; border-color:var(--purple-main);
+      box-shadow: 0 0 0 3px rgba(183,124,255,0.15);
+      min-height:70px;
+    }
+    .comment-submit {
+      background: linear-gradient(135deg, var(--purple-dark), var(--purple-main));
+      border:none; border-radius:40px;
+      padding: 0.5rem 1.2rem;
+      color: #0a0518; font-weight:700;
+      cursor:pointer; font-size:0.85rem;
+      font-family:'Syne',sans-serif;
+      transition:all 0.25s; align-self:flex-end;
+    }
+    .comment-submit:hover { transform:translateY(-2px); box-shadow:0 6px 18px var(--glow); }
+    .comments-list { display:flex; flex-direction:column; gap:1rem; }
+    .comment-item {
+      display:flex; gap:0.8rem;
+      animation: riseIn 0.4s ease both;
+    }
+    .comment-body { flex:1; }
+    .comment-user {
+      font-weight:600; font-size:0.85rem; color:var(--purple-light);
+      display:flex; align-items:center; gap:0.5rem;
+    }
+    .comment-time { font-size:0.72rem; color:var(--text-muted); font-weight:400; }
+    .comment-text { font-size:0.87rem; color:var(--text-muted); margin-top:3px; line-height:1.5; }
+    .comment-actions { display:flex; gap:0.8rem; margin-top:5px; }
+    .cmt-btn {
+      background:none; border:none; color:var(--text-muted);
+      font-size:0.78rem; cursor:pointer;
+      display:flex; align-items:center; gap:3px;
+      transition:color 0.2s;
+    }
+    .cmt-btn:hover { color:var(--purple-main); }
+
+    /* ===== FOOTER ===== */
+    .footer {
+      margin-top: 3rem;
+      text-align: center;
+      padding: 2.5rem 2rem;
+      background: #06020c;
+      border-top: 1px solid #2e1d48;
+    }
+    .footer-email-form {
+      display:flex; flex-wrap:wrap; justify-content:center; gap:0.8rem;
+      max-width:520px; margin:0.8rem auto 1.5rem;
+    }
+    .footer-email-form input {
+      flex:1; min-width:220px;
+      background: rgba(20,12,32,0.85);
+      border: 1px solid #3d2a5e;
+      border-radius: 48px; padding: 0.8rem 1.2rem;
+      color: white; font-size: 0.95rem;
+      transition:all 0.3s;
+    }
+    .footer-email-form input:focus { border-color:var(--purple-main); outline:none; }
+    .footer-email-form button {
+      background: linear-gradient(95deg, #9b4dff, #b77cff);
+      border:none; padding: 0 1.6rem; font-weight:700;
+      border-radius:48px; color:#0f0717;
+      cursor:pointer; transition:all 0.2s;
+      font-family:'Syne',sans-serif;
+    }
+    .footer-email-form button:hover { transform:translateY(-2px); box-shadow:0 10px 22px var(--glow); }
+    .footer-links {
+      max-width:800px; margin:0 auto 1rem;
+      display:flex; flex-wrap:wrap; justify-content:center; gap:1rem;
+    }
+    .footer-links a { color:#b1a0d9; text-decoration:none; font-size:0.8rem; transition:color 0.2s; }
+    .footer-links a:hover { color:var(--purple-light); }
+    .copy { font-size:0.7rem; color:#544b6e; margin-top:1rem; }
+
+    /* ===== TOAST ===== */
+    .toast {
+      position:fixed; bottom:2rem; left:50%; transform:translateX(-50%) translateY(20px);
+      background: var(--bg-card2);
+      border:1px solid var(--purple-main);
+      border-radius:40px; padding:0.7rem 1.5rem;
+      color:var(--purple-light); font-size:0.88rem; font-weight:500;
+      box-shadow:0 8px 24px rgba(0,0,0,0.5);
+      opacity:0; pointer-events:none;
+      transition:all 0.35s ease;
+      z-index:999; white-space:nowrap;
+    }
+    .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+    /* ===== LOADING BAR ===== */
+    .load-bar {
+      position:fixed; top:0; left:0;
+      height:3px;
+      background: linear-gradient(90deg, var(--purple-dark), var(--purple-main), var(--purple-light));
+      z-index:9999;
+      animation:loadBar 0.8s ease-out both;
+      box-shadow:0 0 8px var(--glow);
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 960px) {
+      .page-wrap {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+      }
+      .sidebar { grid-column:1; grid-row:2; }
+      .related-list { flex-direction:row; overflow-x:auto; padding-bottom:0.5rem; }
+      .related-card { flex-direction:column; min-width:160px; max-width:160px; }
+      .related-thumb { width:100%; height:120px; }
+      .comments-col { grid-row:3; }
+    }
+    @media (max-width:600px) {
+      .navbar { padding:0.8rem 1rem; }
+      .page-wrap { padding:1rem 1rem 0; }
+      .video-title { font-size:1.1rem; }
+      .url-input-bar { flex-direction:column; }
+      .url-input-bar input { width:100%; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="load-bar" id="loadBar"></div>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="logo" onclick="window.location.href='index.html'">🎭 ENHUB</div>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="#">Shows</a>
+    <a href="#">Movies</a>
+    <a href="#" class="contact-btn" id="contactNav">📞 Contact</a>
+  </div>
+</nav>
+
+<div class="page-wrap" id="pageWrap">
+
+  <!-- ===== LEFT: PLAYER ===== -->
+  <div class="player-col" data-aos="fade-up" data-aos-duration="600">
+
+    <div class="player-container" id="playerContainer">
+      <!-- VIDEO FRAME -->
+      <div class="video-frame-wrap">
+        <div class="video-placeholder" id="videoPlaceholder">
+          <div class="placeholder-orb" id="placeholderOrb">
+            <div class="orb-ring"></div>
+            🎬
+          </div>
+
+        </div>
+        <iframe
+          id="videoIframe"
+          allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
+          allowfullscreen
+          style="display:none;"
+        ></iframe>
+      </div>
+    </div>
+
+    <!-- VIDEO INFO -->
+    <div class="video-info" id="videoInfo" style="display:none;">
+      <div class="video-title-row">
+        <div>
+          <div class="video-title" id="videoTitleText">🎬 Now Playing</div>
+          <div class="video-meta">
+            <span class="meta-badge" id="videoBadge">🔥 Trending</span>
+            <span class="meta-views" id="videoViews">EntertainHub Exclusive</span>
+          </div>
+        </div>
+      </div>
+      <div class="action-bar">
+        <button class="action-btn" id="likeBtn">👍 Like</button>
+        <button class="action-btn" id="saveBtn">🔖 Save</button>
+        <button class="action-btn" id="shareBtn">🔗 Share</button>
+        <button class="action-btn" id="fullBtn">⛶ Fullscreen</button>
+      </div>
+      <div class="desc-box">
+        <div id="descShort">EntertainHub Original — Premium streaming, zero ads, pure immersion. 🎭</div>
+        <div class="desc-full" id="descFull">
+          EntertainHub Dark Pulse brings you the world's most curated entertainment — from award-winning originals to cult classics, anime vaults to blockbuster Bollywood and international hits. Stream in 4K Vision+, download for offline, share with family. Cancel anytime.
+        </div>
+        <span class="desc-toggle" id="descToggle">▾ More</span>
+      </div>
+    </div>
+
+
+  </div>
+
+  <!-- ===== RIGHT: SIDEBAR RELATED ===== -->
+  <div class="sidebar" data-aos="fade-left" data-aos-duration="700" data-aos-delay="100">
+    <div class="sidebar-title">🎥 Related Shows & Movies</div>
+    <div class="related-list" id="relatedList"></div>
+  </div>
+
+  <!-- ===== BOTTOM: COMMENTS ===== -->
+  <div class="comments-col" data-aos="fade-up" data-aos-duration="600" data-aos-delay="150">
+    <div class="comments-header">
+      <h3>💬 Comments</h3>
+      <span class="comment-count" id="commentCount">4</span>
+    </div>
+    <div class="comment-input-row">
+      <div class="avatar-mini">U</div>
+      <textarea class="comment-input" id="commentInput" placeholder="Apna khayal likho..."></textarea>
+      <button class="comment-submit" id="postComment">Post</button>
+    </div>
+    <div class="comments-list" id="commentsList"></div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <h3 style="font-family:'Syne',sans-serif;font-size:1.5rem;" data-aos="flip-up">Join the primal wave 🎙️</h3>
+  <div class="footer-email-form">
+    <input type="email" placeholder="E-mail address" id="footerEmailInp">
+    <button id="footerSubBtn">Subscribe →</button>
+  </div>
+  <div class="footer-links">
+    <a href="#">Help</a><a href="#">FAQ</a><a href="#">Terms</a><a href="#">Privacy</a>
+    <a href="#">Contact Support</a><a href="#">Gift Cards</a><a href="#">Media Centre</a>
+    <a href="#">Speed Test</a>
+  </div>
+  <div style="margin-top:1rem;">
+    <a href="#" id="footerContactLink" style="background:#2c1e42;padding:8px 18px;border-radius:40px;text-decoration:none;color:#dbbaff;">📞 Contact Us 24/7</a>
+  </div>
+  <div class="copy">© 2025 EntertainHub — All cinematic vibes & trademarks belong to respective creators.</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+// ===== DATA =====
+const relatedMovies = [
+  { title: "ONE PIECE", img: "https://i.ebayimg.com/images/g/bosAAOSwLB5egNBa/s-l500.jpg", badge: "🔥 #1 Global", genre: "Anime • Adventure" },
+  { title: "Dhurandhar", img: "https://mxp-media.ilnmedia.com/media/content/2025/Dec/1---credit---Jio-Studios_6932877fcaaf9.jpg?w=1125&h=1480&cc=1", badge: "New Episode", genre: "Action • Drama" },
+  { title: "Naruto Shippuden", img: "https://media-cache.cinematerial.com/p/500x/kk8i1bwb/naruto-shippuden-japanese-movie-poster.jpg?v=1456788114", badge: "Top Anime", genre: "Anime • Ninja" },
+  { title: "Saiyaara", img: "https://media-cache.cinematerial.com/p/500x/mwbgqsi1/saiyaara-indian-movie-poster.jpg?v=1753463453", badge: "Musical Hit", genre: "Romance • Music" },
+  { title: "Bhoot Bangla", img: "https://media-cache.cinematerial.com/p/500x/vuluhdya/bhooth-bangla-indian-movie-poster.jpg?v=1733814295", badge: "Horror Comedy", genre: "Horror • Comedy" },
+  { title: "Dhurandhar: The Revenge", img: "https://media-cache.cinematerial.com/p/500x/nvgurmrv/dhurandhar-the-revenge-indian-movie-poster.jpg?v=1773121152", badge: "Top 5", genre: "Action • Thriller" },
+  { title: "Kapil Show S2", img: "https://occ-0-1917-64.1.nflxso.net/dnm/api/v6/mAcAr9TxZIVbINe88xb3Teg5_OA/AAAABaYisXNk8FH9PL2mj9MTYQFgo8G_1gf9k4mgnowFfLbJR7L5TBNRYF-SKVr6UAwN5h8mKsAI4NVk6FdEiwD80OcF1YlhczIguBaD0OspQgWm37MV_sJPNZ_qM5iVWQVDKJs6.webp?r=cca", badge: "Comedy", genre: "Comedy • Talk Show" },
+  { title: "Stree 2", img: "https://media-cache.cinematerial.com/p/500x/suglhbwb/stree-2-indian-movie-poster.jpg?v=1721223530", badge: "Horror Comedy", genre: "Horror • Comedy" },
+  { title: "Jujutsu Kaisen", img: "https://media-cache.cinematerial.com/p/500x/hcrwrayn/jujutsu-kaisen-japanese-movie-poster.jpg?v=1682193785", badge: "New Season", genre: "Anime • Dark Fantasy" }
+];
+
+const defaultComments = [
+  { user:"StarPulse_PK", time:"2 ghante pehle", text:"EntertainHub ne toh kaam hi khatam kar dia! Best streaming experience ever 🔥", likes:24 },
+  { user:"NightOwl92", time:"4 ghante pehle", text:"Yaar GDrive integration toh zabardast hai, apni movies bhi chal rahi hain 😮", likes:17 },
+  { user:"PurpleVibes", time:"1 din pehle", text:"Theme toh dil ko chu gayi! Dark purple bilkul perfect hai ✨", likes:31 },
+  { user:"CineFreak_Lahore", time:"2 din pehle", text:"Related movies sidebar mein ONE PIECE dekh ke dil khush ho gaya 🏴‍☠️", likes:12 }
+];
+
+// ===== HELPERS =====
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+function convertDriveUrl(url) {
+  // Handle various GDrive formats
+  const fileMatch = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+  if (fileMatch) {
+    return `https://drive.google.com/file/d/${fileMatch[1]}/preview`;
+  }
+  // open?id= format
+  const idMatch = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+  if (idMatch) {
+    return `https://drive.google.com/file/d/${idMatch[1]}/preview`;
+  }
+  // Already a preview link
+  if (url.includes('drive.google.com') && url.includes('preview')) return url;
+  // YouTube
+  const ytMatch = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([a-zA-Z0-9_-]{11})/);
+  if (ytMatch) {
+    return `https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1&rel=0`;
+  }
+  // Direct video URL
+  if (url.match(/\.(mp4|webm|mkv|mov)(\?|$)/i)) return url;
+  return null;
+}
+
+// ===== BUILD RELATED =====
+function buildRelated() {
+  const list = document.getElementById('relatedList');
+  relatedMovies.forEach((m, i) => {
+    const card = document.createElement('a');
+    card.className = 'related-card';
+    card.href = 'play.html';
+    card.style.animationDelay = (i * 60) + 'ms';
+    card.innerHTML = `
+      <div class="related-thumb">
+        <img src="${m.img}" alt="${m.title}" loading="lazy" onerror="this.src='https://via.placeholder.com/110x160?text=Poster'">
+        <div class="related-play-overlay">
+          <div class="mini-play">▶</div>
+        </div>
+      </div>
+      <div class="related-info">
+        <div class="related-title">${m.title}</div>
+        <span class="related-badge">${m.badge}</span>
+        <div class="related-genre">${m.genre}</div>
+      </div>
+    `;
+    card.addEventListener('click', (e) => {
+      e.preventDefault();
+      showToast(`▶ Loading: ${m.title}...`);
+      // Set as current playing
+      document.getElementById('videoTitleText').textContent = `🎬 ${m.title}`;
+      document.getElementById('videoBadge').textContent = m.badge;
+      document.getElementById('videoViews').textContent = m.genre;
+      // Highlight selected
+      document.querySelectorAll('.related-card').forEach(c => c.style.borderColor = '');
+      card.style.borderColor = 'var(--purple-main)';
+      // Show info
+      document.getElementById('videoInfo').style.display = 'block';
+    });
+    list.appendChild(card);
+  });
+}
+
+// ===== BUILD COMMENTS =====
+function buildComments(list) {
+  const container = document.getElementById('commentsList');
+  container.innerHTML = '';
+  list.forEach((c, i) => {
+    const el = document.createElement('div');
+    el.className = 'comment-item';
+    el.style.animationDelay = (i * 80) + 'ms';
+    const initials = c.user.slice(0,1).toUpperCase();
+    el.innerHTML = `
+      <div class="avatar-mini" style="background:linear-gradient(135deg,#${Math.floor(Math.random()*8+2)*111111}55,#b77cff);">${initials}</div>
+      <div class="comment-body">
+        <div class="comment-user">${c.user} <span class="comment-time">${c.time}</span></div>
+        <div class="comment-text">${c.text}</div>
+        <div class="comment-actions">
+          <button class="cmt-btn">👍 ${c.likes}</button>
+          <button class="cmt-btn">💬 Reply</button>
+        </div>
+      </div>
+    `;
+    container.appendChild(el);
+  });
+}
+
+// ===== PLAY LOGIC =====
+function doPlay() {
+  const raw = document.getElementById('driveUrl').value.trim();
+  if (!raw) { showToast('⚠️ Pehle link paste karo!'); return; }
+
+  const embedUrl = convertDriveUrl(raw);
+  if (!embedUrl) {
+    showToast('❌ Invalid link — Google Drive ya YouTube link chahiye');
+    return;
+  }
+
+  const iframe = document.getElementById('videoIframe');
+  const placeholder = document.getElementById('videoPlaceholder');
+  const videoInfo = document.getElementById('videoInfo');
+  const defaultInfo = document.getElementById('defaultInfo');
+
+  // Check if it's a direct video URL (mp4 etc)
+  if (raw.match(/\.(mp4|webm|mov)(\?|$)/i)) {
+    // Use video tag instead
+    const vf = document.querySelector('.video-frame-wrap');
+    vf.innerHTML = `<video controls autoplay style="position:absolute;inset:0;width:100%;height:100%;background:#000;" src="${raw}">Your browser does not support video.</video>`;
+  } else {
+    iframe.src = embedUrl;
+    iframe.style.display = 'block';
+  }
+
+  placeholder.classList.add('hidden');
+  videoInfo.style.display = 'block';
+  defaultInfo.style.display = 'none';
+  showToast('🎬 Stream shuru! Enjoy karo ✨');
+  if (raw.includes('youtube')) {
+    document.getElementById('videoTitleText').textContent = '🎬 YouTube Video';
+    document.getElementById('videoBadge').textContent = '▶ YouTube';
+  } else {
+    document.getElementById('videoTitleText').textContent = '🎬 Google Drive Video';
+    document.getElementById('videoBadge').textContent = '📁 GDrive';
+  }
+  document.getElementById('videoViews').textContent = 'EntertainHub Player';
+}
+
+// ===== ACTION BUTTONS =====
+function initActions() {
+  document.getElementById('likeBtn').addEventListener('click', function() {
+    this.classList.toggle('active');
+    showToast(this.classList.contains('active') ? '👍 Liked!' : '👍 Like removed');
+  });
+  document.getElementById('saveBtn').addEventListener('click', function() {
+    this.classList.toggle('active');
+    showToast(this.classList.contains('active') ? '🔖 Saved to Watchlist' : '🔖 Removed from Watchlist');
+  });
+  document.getElementById('shareBtn').addEventListener('click', () => {
+    navigator.clipboard?.writeText(window.location.href).then(() => showToast('🔗 Link copied!')).catch(() => showToast('🔗 Share: ' + window.location.href));
+  });
+  document.getElementById('fullBtn').addEventListener('click', () => {
+    const iframe = document.getElementById('videoIframe');
+    if (iframe.requestFullscreen) iframe.requestFullscreen();
+    else showToast('⛶ Fullscreen — browser allow karo');
+  });
+
+  // Description toggle
+  document.getElementById('descToggle').addEventListener('click', function() {
+    const full = document.getElementById('descFull');
+    full.classList.toggle('open');
+    this.textContent = full.classList.contains('open') ? '▴ Less' : '▾ More';
+  });
+}
+
+// ===== COMMENTS POST =====
+let allComments = [...defaultComments];
+function initComments() {
+  buildComments(allComments);
+  document.getElementById('postComment').addEventListener('click', () => {
+    const txt = document.getElementById('commentInput').value.trim();
+    if (!txt) { showToast('⚠️ Kuch likho pehle!'); return; }
+    allComments.unshift({ user:'You', time:'Abhi', text:txt, likes:0 });
+    buildComments(allComments);
+    document.getElementById('commentInput').value = '';
+    document.getElementById('commentCount').textContent = allComments.length;
+    showToast('💬 Comment post ho gaya!');
+  });
+}
+
+// ===== NAV & FOOTER =====
+function initNav() {
+  const contactFn = () => alert('📞 EntertainHub: support@entertainhub.com | +92 300 123 4567');
+  document.getElementById('contactNav')?.addEventListener('click', e => { e.preventDefault(); contactFn(); });
+  document.getElementById('footerContactLink')?.addEventListener('click', e => { e.preventDefault(); contactFn(); });
+  document.getElementById('footerSubBtn')?.addEventListener('click', () => {
+    const v = document.getElementById('footerEmailInp').value.trim();
+    if (v.includes('@')) { showToast(`📧 Subscribed: ${v}`); document.getElementById('footerEmailInp').value=''; }
+    else showToast('⚠️ Valid email daalo');
+  });
+  document.querySelectorAll('.nav-links a:not(.contact-btn)').forEach(a => {
+    a.addEventListener('click', e => {
+      if(a.getAttribute('href') !== 'index.html') { e.preventDefault(); showToast(`✨ ${a.textContent} section`); }
+    });
+  });
+}
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded', () => {
+  AOS.init({ duration:650, once:true, offset:30, easing:'ease-out-quad' });
+
+  buildRelated();
+  buildComments(defaultComments);
+  initActions();
+  initComments();
+  initNav();
+
+  // Remove load bar
+  setTimeout(() => {
+    const lb = document.getElementById('loadBar');
+    if(lb) { lb.style.opacity='0'; setTimeout(()=>lb.remove(), 400); }
+  }, 900);
+
+  // Play button
+  document.getElementById('playBtn').addEventListener('click', doPlay);
+  document.getElementById('driveUrl').addEventListener('keypress', e => { if(e.key==='Enter') doPlay(); });
+
+  // Placeholder orb click
+  document.getElementById('placeholderOrb')?.addEventListener('click', () => {
+    document.getElementById('driveUrl').focus();
+    showToast('🔗 Link paste karo aur Play dabao!');
+  });
+});
+</script>
+</body>
+</html>

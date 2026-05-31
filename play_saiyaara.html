@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Saiyaara — EntertainHub Dark Pulse</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg-base: #07030e;
+      --bg-card: #120b1e;
+      --bg-card2: #1a1029;
+      --bg-hover: #231540;
+      --purple-main: #b77cff;
+      --purple-light: #d6aaff;
+      --purple-dark: #7c3aed;
+      --purple-dim: #441e6e;
+      --text-primary: #f0eaff;
+      --text-muted: #a896cc;
+      --border: rgba(157,78,221,0.3);
+      --glow: rgba(183,124,255,0.4);
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg-base);
+      font-family: 'DM Sans', sans-serif;
+      color: var(--text-primary);
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: #130d1f; }
+    ::-webkit-scrollbar-thumb { background: var(--purple-main); border-radius: 10px; }
+
+    @keyframes glowPulse {
+      0%,100% { box-shadow: 0 0 10px var(--glow), 0 0 0 0 rgba(183,124,255,0); }
+      50% { box-shadow: 0 0 30px var(--glow), 0 0 60px rgba(183,124,255,0.12); }
+    }
+    @keyframes riseIn {
+      from { opacity:0; transform:translateY(24px); }
+      to { opacity:1; transform:translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity:0; } to { opacity:1; }
+    }
+    @keyframes spinGlow {
+      0% { transform:rotate(0deg); } 100% { transform:rotate(360deg); }
+    }
+    @keyframes floatY {
+      0%,100% { transform:translateY(0); } 50% { transform:translateY(-6px); }
+    }
+    @keyframes loadBar {
+      0% { width:0%; } 40% { width:60%; } 80% { width:85%; } 100% { width:100%; }
+    }
+    @keyframes shimmerBg {
+      0% { background-position: -400px 0; }
+      100% { background-position: 400px 0; }
+    }
+
+    /* LOAD BAR */
+    .load-bar {
+      position:fixed; top:0; left:0; height:3px;
+      background: linear-gradient(90deg, var(--purple-dark), var(--purple-main), var(--purple-light));
+      z-index:9999; animation:loadBar 1s ease-out both;
+      box-shadow:0 0 8px var(--glow);
+    }
+
+    /* NAVBAR */
+    .navbar {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.9rem 2.5rem;
+      background: rgba(7,3,14,0.94);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--border);
+    }
+    .logo {
+      font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.6rem;
+      background: linear-gradient(125deg, #d6aaff, #b77cff, #9d4edd);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      cursor: pointer; letter-spacing: -0.5px; transition: transform 0.2s;
+    }
+    .logo:hover { transform: scale(1.03); }
+    .nav-links { display:flex; gap:1.8rem; align-items:center; }
+    .nav-links a {
+      color:#e2d6ff; text-decoration:none; font-weight:500; font-size:0.95rem;
+      position:relative; transition:0.2s;
+    }
+    .nav-links a::after {
+      content:''; position:absolute; bottom:-4px; left:0;
+      width:0; height:2px; background:var(--purple-main);
+      transition:width 0.3s; border-radius:2px;
+    }
+    .nav-links a:hover::after { width:100%; }
+    .nav-links a:hover { color:#fff; }
+    .contact-btn {
+      background: rgba(183,124,255,0.15) !important;
+      padding: 0.4rem 1.2rem; border-radius:40px;
+      border: 1px solid rgba(183,124,255,0.5);
+    }
+    .contact-btn:hover {
+      background: var(--purple-main) !important; color:#0a060f !important;
+      box-shadow:0 4px 14px var(--glow);
+    }
+    .contact-btn::after { display:none !important; }
+
+    /* PAGE LAYOUT */
+    .page-wrap {
+      max-width: 1500px; margin: 0 auto;
+      padding: 2rem 2rem 0;
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 1.8rem;
+      animation: riseIn 0.6s ease both;
+    }
+
+    /* PLAYER COL */
+    .player-col { grid-column:1; }
+
+    /* Movie Header Banner */
+    .movie-banner {
+      display: flex; align-items: center; gap: 1.2rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 1rem 1.4rem;
+      margin-bottom: 1rem;
+      position: relative; overflow: hidden;
+    }
+    .movie-banner::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(120deg, rgba(183,124,255,0.07) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .movie-poster-mini {
+      width: 64px; height: 88px; border-radius: 10px;
+      object-fit: cover; flex-shrink: 0;
+      border: 2px solid var(--purple-dim);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+    }
+    .movie-banner-info { flex: 1; }
+    .movie-banner-title {
+      font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 800;
+      background: linear-gradient(to right, #f0eaff, #cbaaff);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .movie-banner-meta { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 5px; }
+    .meta-pill {
+      background: var(--purple-dim); border: 1px solid var(--border);
+      border-radius: 20px; padding: 0.2rem 0.8rem;
+      font-size: 0.72rem; font-weight: 600; color: var(--purple-light);
+    }
+    .movie-banner-desc {
+      font-size: 0.82rem; color: var(--text-muted);
+      margin-top: 6px; line-height: 1.5;
+    }
+
+    /* PLAYER CONTAINER */
+    .player-container {
+      background: #000; border-radius: 20px; overflow: hidden;
+      position: relative; border: 1px solid var(--border);
+      animation: glowPulse 4s ease infinite;
+    }
+
+    /* Video Frame */
+    .video-frame-wrap {
+      position: relative; width: 100%; padding-top: 56.25%;
+      background: #050010;
+    }
+    .video-frame-wrap iframe {
+      position: absolute; inset: 0; width: 100%; height: 100%; border: none;
+    }
+
+    /* ACTION BAR BELOW PLAYER */
+    .player-action-bar {
+      display: flex; gap: 0.8rem; padding: 1rem 1.2rem;
+      background: var(--bg-card);
+      border-top: 1px solid var(--border);
+      flex-wrap: wrap; align-items: center;
+    }
+    .action-btn {
+      background: var(--bg-card2); border: 1px solid var(--border);
+      border-radius: 40px; padding: 0.55rem 1.2rem;
+      color: var(--text-primary); font-size: 0.85rem; font-weight: 500;
+      cursor: pointer; display: flex; align-items: center; gap: 6px;
+      transition: all 0.25s; font-family: 'DM Sans', sans-serif;
+      text-decoration: none;
+    }
+    .action-btn:hover {
+      border-color: var(--purple-main); background: var(--bg-hover);
+      box-shadow: 0 4px 12px var(--glow); transform: translateY(-2px);
+    }
+    .action-btn.active {
+      background: var(--purple-dim); border-color: var(--purple-main);
+      color: var(--purple-light);
+    }
+    /* Download button special */
+    .dl-btn {
+      background: linear-gradient(135deg, #9b4dff, #b77cff) !important;
+      border: none !important; color: #0a0518 !important; font-weight: 700 !important;
+      font-family: 'Syne', sans-serif !important;
+    }
+    .dl-btn:hover {
+      background: linear-gradient(135deg, #b06eff, #ca9eff) !important;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 22px rgba(155,77,255,0.5) !important;
+    }
+
+    /* FULLSCREEN HINT */
+    .fs-hint {
+      font-size: 0.75rem; color: var(--text-muted); margin-left: auto;
+      padding: 0 0.5rem;
+    }
+
+    /* VIDEO INFO */
+    .video-info { padding: 1rem 0; }
+    .video-title {
+      font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 700;
+      background: linear-gradient(to right, #f0eaff, #cbaaff);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .desc-box {
+      margin-top: 0.8rem;
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 16px; padding: 1rem 1.2rem;
+      font-size: 0.88rem; color: var(--text-muted); line-height: 1.6;
+      transition: border-color 0.3s;
+    }
+    .desc-box:hover { border-color: var(--purple-main); }
+
+    /* SIDEBAR */
+    .sidebar { grid-column:2; }
+    .sidebar-title {
+      font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700;
+      border-left: 4px solid var(--purple-main);
+      padding-left: 0.8rem; margin-bottom: 1rem;
+    }
+    .related-list { display:flex; flex-direction:column; gap:0.85rem; }
+    .related-card {
+      display: flex; gap: 0.8rem;
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 16px; overflow: hidden;
+      cursor: pointer; transition: all 0.3s; text-decoration: none;
+    }
+    .related-card:hover {
+      border-color: var(--purple-main); transform: translateX(4px);
+      background: var(--bg-hover); box-shadow: 0 8px 24px -8px var(--glow);
+    }
+    .related-thumb {
+      width: 110px; flex-shrink: 0; position: relative; overflow: hidden;
+    }
+    .related-thumb img {
+      width:100%; height:100%; object-fit:cover;
+      transition: transform 0.35s, filter 0.35s;
+    }
+    .related-card:hover .related-thumb img {
+      transform:scale(1.08); filter:brightness(0.7) saturate(1.3);
+    }
+    .related-play-overlay {
+      position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+      opacity:0; transition:opacity 0.25s; background:rgba(0,0,0,0.35);
+    }
+    .related-card:hover .related-play-overlay { opacity:1; }
+    .mini-play {
+      width:32px; height:32px; border-radius:50%;
+      background:var(--purple-main); display:flex; align-items:center; justify-content:center;
+      font-size:0.75rem; box-shadow:0 0 12px var(--glow);
+    }
+    .related-info { flex:1; padding:0.6rem 0.6rem 0.6rem 0; display:flex; flex-direction:column; justify-content:center; gap:4px; }
+    .related-title {
+      font-weight:600; font-size:0.85rem; color:var(--text-primary);
+      display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; line-height:1.3;
+    }
+    .related-badge {
+      background:#3a1966; border-radius:12px; padding:0.15rem 0.5rem;
+      font-size:0.68rem; color:var(--purple-light); font-weight:600; display:inline-block; width:fit-content;
+    }
+    .related-genre { font-size:0.72rem; color:var(--text-muted); }
+
+    /* COMMENTS */
+    .comments-col { grid-column:1; padding-bottom:2rem; }
+    .comments-header { display:flex; align-items:center; gap:1rem; margin-bottom:1.2rem; }
+    .comments-header h3 { font-family:'Syne',sans-serif; font-size:1.15rem; }
+    .comment-count {
+      background:var(--purple-dim); border-radius:20px; padding:0.15rem 0.7rem;
+      font-size:0.75rem; color:var(--purple-light); font-weight:700;
+    }
+    .comment-input-row { display:flex; gap:0.8rem; align-items:flex-start; margin-bottom:1.5rem; }
+    .avatar-mini {
+      width:36px; height:36px; border-radius:50%;
+      background:linear-gradient(135deg, var(--purple-dark), var(--purple-main));
+      display:flex; align-items:center; justify-content:center;
+      font-size:0.85rem; flex-shrink:0; font-weight:700;
+    }
+    .comment-input {
+      flex:1; background:var(--bg-card); border:1px solid var(--border);
+      border-radius:12px; padding:0.7rem 1rem; color:var(--text-primary);
+      font-family:'DM Sans',sans-serif; font-size:0.88rem; resize:none; min-height:44px;
+      transition:all 0.3s;
+    }
+    .comment-input:focus {
+      outline:none; border-color:var(--purple-main);
+      box-shadow:0 0 0 3px rgba(183,124,255,0.15); min-height:70px;
+    }
+    .comment-submit {
+      background:linear-gradient(135deg, var(--purple-dark), var(--purple-main));
+      border:none; border-radius:40px; padding:0.5rem 1.2rem;
+      color:#0a0518; font-weight:700; cursor:pointer; font-size:0.85rem;
+      font-family:'Syne',sans-serif; transition:all 0.25s; align-self:flex-end;
+    }
+    .comment-submit:hover { transform:translateY(-2px); box-shadow:0 6px 18px var(--glow); }
+    .comments-list { display:flex; flex-direction:column; gap:1rem; }
+    .comment-item { display:flex; gap:0.8rem; animation:riseIn 0.4s ease both; }
+    .comment-body { flex:1; }
+    .comment-user { font-weight:600; font-size:0.85rem; color:var(--purple-light); display:flex; align-items:center; gap:0.5rem; }
+    .comment-time { font-size:0.72rem; color:var(--text-muted); font-weight:400; }
+    .comment-text { font-size:0.87rem; color:var(--text-muted); margin-top:3px; line-height:1.5; }
+    .comment-actions { display:flex; gap:0.8rem; margin-top:5px; }
+    .cmt-btn {
+      background:none; border:none; color:var(--text-muted);
+      font-size:0.78rem; cursor:pointer; display:flex; align-items:center; gap:3px; transition:color 0.2s;
+    }
+    .cmt-btn:hover { color:var(--purple-main); }
+
+    /* FOOTER */
+    .footer {
+      margin-top:3rem; text-align:center; padding:2.5rem 2rem;
+      background:#06020c; border-top:1px solid #2e1d48;
+    }
+    .footer-links {
+      max-width:800px; margin:1rem auto;
+      display:flex; flex-wrap:wrap; justify-content:center; gap:1rem;
+    }
+    .footer-links a { color:#b1a0d9; text-decoration:none; font-size:0.8rem; transition:color 0.2s; }
+    .footer-links a:hover { color:var(--purple-light); }
+    .copy { font-size:0.7rem; color:#544b6e; margin-top:1rem; }
+
+    /* TOAST */
+    .toast {
+      position:fixed; bottom:2rem; left:50%; transform:translateX(-50%) translateY(20px);
+      background:var(--bg-card2); border:1px solid var(--purple-main);
+      border-radius:40px; padding:0.7rem 1.5rem;
+      color:var(--purple-light); font-size:0.88rem; font-weight:500;
+      box-shadow:0 8px 24px rgba(0,0,0,0.5);
+      opacity:0; pointer-events:none; transition:all 0.35s ease;
+      z-index:999; white-space:nowrap;
+    }
+    .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+    /* RESPONSIVE */
+    @media (max-width:960px) {
+      .page-wrap { grid-template-columns:1fr; }
+      .sidebar { grid-column:1; }
+      .related-list { flex-direction:row; overflow-x:auto; padding-bottom:0.5rem; }
+      .related-card { flex-direction:column; min-width:160px; max-width:160px; }
+      .related-thumb { width:100%; height:120px; }
+      .comments-col { grid-column:1; }
+    }
+    @media (max-width:600px) {
+      .navbar { padding:0.8rem 1rem; }
+      .page-wrap { padding:1rem 1rem 0; }
+      .player-action-bar { padding:0.8rem; gap:0.5rem; }
+      .movie-banner-title { font-size:1.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="load-bar" id="loadBar"></div>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="logo" onclick="window.location.href='index.html'">🎭 ENHUB</div>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="#">Shows</a>
+    <a href="#">Movies</a>
+    <a href="play.html">▶ Player</a>
+    <a href="#" class="contact-btn" id="contactNav">📞 Contact</a>
+  </div>
+</nav>
+
+<div class="page-wrap">
+
+  <!-- LEFT: PLAYER -->
+  <div class="player-col">
+
+    <!-- Movie Header Banner -->
+    <div class="movie-banner">
+      <img class="movie-poster-mini"
+        src="https://media-cache.cinematerial.com/p/500x/mwbgqsi1/saiyaara-indian-movie-poster.jpg?v=1753463453"
+        alt="Saiyaara Poster"
+        onerror="this.src='https://via.placeholder.com/64x88?text=🎬'"
+      >
+      <div class="movie-banner-info">
+        <div class="movie-banner-title">🎶 Saiyaara</div>
+        <div class="movie-banner-meta">
+          <span class="meta-pill">🎵 Musical Hit</span>
+          <span class="meta-pill">❤️ Romance</span>
+          <span class="meta-pill">🎬 2025</span>
+          <span class="meta-pill">⭐ HD</span>
+        </div>
+        <div class="movie-banner-desc">
+          Ek romantic musical journey — pyaar, dard aur sangeet ka perfect blend. EntertainHub Exclusive HD Stream. 🎭
+        </div>
+      </div>
+    </div>
+
+    <!-- PLAYER -->
+    <div class="player-container" id="playerContainer">
+      <div class="video-frame-wrap">
+        <iframe
+          id="saiyaaraPlayer"
+          src="https://drive.google.com/file/d/1LBPphb49iRKo9UJAsKROxjXn1Gtu2rYN/preview"
+          allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
+          allowfullscreen
+        ></iframe>
+      </div>
+
+      <!-- ACTION BAR INSIDE PLAYER CARD -->
+      <div class="player-action-bar">
+        <button class="action-btn" id="likeBtn">👍 Like</button>
+        <button class="action-btn" id="saveBtn">🔖 Save</button>
+        <button class="action-btn" id="shareBtn">🔗 Share</button>
+        <button class="action-btn" id="fullBtn">⛶ Fullscreen</button>
+        <a
+          class="action-btn dl-btn"
+          href="https://drive.google.com/uc?export=download&id=1LBPphb49iRKo9UJAsKROxjXn1Gtu2rYN"
+          target="_blank"
+          rel="noopener noreferrer"
+          id="dlBtn"
+        >⬇ Download</a>
+        <span class="fs-hint">💡 GDrive player — full screen use karo top-right se</span>
+      </div>
+    </div>
+
+    <!-- VIDEO INFO -->
+    <div class="video-info">
+      <div class="video-title">🎬 Ab Chal Rahi Hai — Saiyaara (Full Movie)</div>
+      <div class="desc-box">
+        <strong style="color:var(--purple-light);">Saiyaara</strong> — ek dil ko chhu lene wali romantic musical story. Yeh film pyaar ki gehraiyon mein utarti hai, jahan sangeet sirf background nahi — woh feelings ki zubaan hai. 🎵<br><br>
+        GDrive player mein <strong>bottom-right ka fullscreen button</strong> use karo poori movie ke liye. <strong>Download</strong> ke liye neeche wala button dabao — apne device par save karo offline dekhne ke liye. ✨
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT: SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-title">🎥 Related Shows & Movies</div>
+    <div class="related-list" id="relatedList"></div>
+  </div>
+
+  <!-- COMMENTS -->
+  <div class="comments-col">
+    <div class="comments-header">
+      <h3>💬 Comments</h3>
+      <span class="comment-count" id="commentCount">5</span>
+    </div>
+    <div class="comment-input-row">
+      <div class="avatar-mini">U</div>
+      <textarea class="comment-input" id="commentInput" placeholder="Saiyaara ke baare mein apna khayal likho..."></textarea>
+      <button class="comment-submit" id="postComment">Post</button>
+    </div>
+    <div class="comments-list" id="commentsList"></div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <h3 style="font-family:'Syne',sans-serif;font-size:1.4rem;">🎶 EntertainHub — Har Kahani, Har Junoon</h3>
+  <div class="footer-links">
+    <a href="#">Help</a><a href="#">FAQ</a><a href="#">Terms</a><a href="#">Privacy</a>
+    <a href="#">Contact Support</a><a href="#">Gift Cards</a><a href="#">Media Centre</a>
+  </div>
+  <div style="margin-top:1rem;">
+    <a href="#" id="footerContactLink" style="background:#2c1e42;padding:8px 18px;border-radius:40px;text-decoration:none;color:#dbbaff;">📞 Contact Us 24/7</a>
+  </div>
+  <div class="copy">© 2025 EntertainHub — All cinematic vibes & trademarks belong to respective creators.</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== DATA =====
+const relatedMovies = [
+  { title:"ONE PIECE", img:"https://i.ebayimg.com/images/g/bosAAOSwLB5egNBa/s-l500.jpg", badge:"🔥 #1 Global", genre:"Anime • Adventure" },
+  { title:"Dhurandhar", img:"https://mxp-media.ilnmedia.com/media/content/2025/Dec/1---credit---Jio-Studios_6932877fcaaf9.jpg?w=1125&h=1480&cc=1", badge:"New Episode", genre:"Action • Drama" },
+  { title:"Naruto Shippuden", img:"https://media-cache.cinematerial.com/p/500x/kk8i1bwb/naruto-shippuden-japanese-movie-poster.jpg?v=1456788114", badge:"Top Anime", genre:"Anime • Ninja" },
+  { title:"Stree 2", img:"https://media-cache.cinematerial.com/p/500x/suglhbwb/stree-2-indian-movie-poster.jpg?v=1721223530", badge:"Horror Comedy", genre:"Horror • Comedy" },
+  { title:"Bhoot Bangla", img:"https://media-cache.cinematerial.com/p/500x/vuluhdya/bhooth-bangla-indian-movie-poster.jpg?v=1733814295", badge:"Horror Comedy", genre:"Horror • Comedy" },
+  { title:"Jujutsu Kaisen", img:"https://media-cache.cinematerial.com/p/500x/hcrwrayn/jujutsu-kaisen-japanese-movie-poster.jpg?v=1682193785", badge:"New Season", genre:"Anime • Dark Fantasy" },
+  { title:"Kapil Show S2", img:"https://occ-0-1917-64.1.nflxso.net/dnm/api/v6/mAcAr9TxZIVbINe88xb3Teg5_OA/AAAABaYisXNk8FH9PL2mj9MTYQFgo8G_1gf9k4mgnowFfLbJR7L5TBNRYF-SKVr6UAwN5h8mKsAI4NVk6FdEiwD80OcF1YlhczIguBaD0OspQgWm37MV_sJPNZ_qM5iVWQVDKJs6.webp?r=cca", badge:"Comedy", genre:"Comedy • Talk Show" },
+  { title:"Dhurandhar: The Revenge", img:"https://media-cache.cinematerial.com/p/500x/nvgurmrv/dhurandhar-the-revenge-indian-movie-poster.jpg?v=1773121152", badge:"Top 5", genre:"Action • Thriller" }
+];
+
+const defaultComments = [
+  { user:"SaiyaaraFan_PK", time:"1 ghanta pehle", text:"Yeh movie toh dil cheer deti hai! Saiyaara ka har scene kamaal hai 🎶❤️", likes:42 },
+  { user:"MusicLover92", time:"3 ghante pehle", text:"EntertainHub pe HD mein dekh ke alag hi experience hai, sound quality zabardast hai! 🎵", likes:28 },
+  { user:"PurpleVibes_Lahore", time:"5 ghante pehle", text:"Download button ne kaam bana dia — ab offline bhi dekhenge ✈️", likes:19 },
+  { user:"CineFreak_KHI", time:"1 din pehle", text:"Related mein ONE PIECE bhi hai — ENHUB sab kuch hai yaar 🏴‍☠️🎬", likes:15 },
+  { user:"RomanceKing", time:"2 din pehle", text:"Yeh romantic films ka collection toh kamaal hai EntertainHub ka, ek se badhkar ek ✨", likes:31 }
+];
+
+// ===== TOAST =====
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ===== RELATED =====
+function buildRelated() {
+  const list = document.getElementById('relatedList');
+  relatedMovies.forEach((m, i) => {
+    const card = document.createElement('a');
+    card.className = 'related-card';
+    card.href = 'play.html';
+    card.innerHTML = `
+      <div class="related-thumb">
+        <img src="${m.img}" alt="${m.title}" loading="lazy" onerror="this.src='https://via.placeholder.com/110x160?text=🎬'">
+        <div class="related-play-overlay"><div class="mini-play">▶</div></div>
+      </div>
+      <div class="related-info">
+        <div class="related-title">${m.title}</div>
+        <span class="related-badge">${m.badge}</span>
+        <div class="related-genre">${m.genre}</div>
+      </div>
+    `;
+    card.addEventListener('click', e => {
+      e.preventDefault();
+      showToast(`▶ Loading: ${m.title}...`);
+    });
+    list.appendChild(card);
+  });
+}
+
+// ===== COMMENTS =====
+let allComments = [...defaultComments];
+function buildComments(list) {
+  const container = document.getElementById('commentsList');
+  container.innerHTML = '';
+  list.forEach((c, i) => {
+    const el = document.createElement('div');
+    el.className = 'comment-item';
+    el.style.animationDelay = (i * 80) + 'ms';
+    const initials = c.user.slice(0,1).toUpperCase();
+    const hue = (i * 47 + 260) % 360;
+    el.innerHTML = `
+      <div class="avatar-mini" style="background:linear-gradient(135deg,hsl(${hue},60%,30%),#b77cff);">${initials}</div>
+      <div class="comment-body">
+        <div class="comment-user">${c.user} <span class="comment-time">${c.time}</span></div>
+        <div class="comment-text">${c.text}</div>
+        <div class="comment-actions">
+          <button class="cmt-btn">👍 ${c.likes}</button>
+          <button class="cmt-btn">💬 Reply</button>
+        </div>
+      </div>
+    `;
+    container.appendChild(el);
+  });
+}
+
+// ===== ACTION BUTTONS =====
+function initActions() {
+  document.getElementById('likeBtn').addEventListener('click', function() {
+    this.classList.toggle('active');
+    showToast(this.classList.contains('active') ? '👍 Liked! Saiyaara ❤️' : '👍 Like removed');
+  });
+  document.getElementById('saveBtn').addEventListener('click', function() {
+    this.classList.toggle('active');
+    showToast(this.classList.contains('active') ? '🔖 Saiyaara saved to Watchlist!' : '🔖 Removed from Watchlist');
+  });
+  document.getElementById('shareBtn').addEventListener('click', () => {
+    const url = window.location.href;
+    if (navigator.share) {
+      navigator.share({ title: 'Saiyaara — EntertainHub', url }).catch(() => {});
+    } else {
+      navigator.clipboard?.writeText(url).then(() => showToast('🔗 Link copied! Share karo ✨')).catch(() => showToast('🔗 ' + url));
+    }
+  });
+
+  // Fullscreen: try to fullscreen the iframe
+  document.getElementById('fullBtn').addEventListener('click', () => {
+    const iframe = document.getElementById('saiyaaraPlayer');
+    const container = document.getElementById('playerContainer');
+    const req = iframe.requestFullscreen || iframe.webkitRequestFullscreen || iframe.mozRequestFullScreen;
+    const reqC = container.requestFullscreen || container.webkitRequestFullscreen || container.mozRequestFullScreen;
+    if (req) {
+      req.call(iframe).catch(() => {
+        // fallback: fullscreen the container
+        if (reqC) reqC.call(container).catch(() => showToast('⛶ Browser ne fullscreen allow nahi kiya'));
+      });
+    } else if (reqC) {
+      reqC.call(container).catch(() => showToast('⛶ Fullscreen nahi mila — GDrive player mein try karo'));
+    } else {
+      showToast('⛶ GDrive player ke andar se fullscreen karo ✨');
+    }
+  });
+
+  document.getElementById('dlBtn').addEventListener('click', () => {
+    showToast('⬇ Download shuru ho rahi hai... ✨');
+  });
+}
+
+// ===== COMMENTS POST =====
+function initComments() {
+  buildComments(allComments);
+  document.getElementById('postComment').addEventListener('click', () => {
+    const txt = document.getElementById('commentInput').value.trim();
+    if (!txt) { showToast('⚠️ Kuch likho pehle!'); return; }
+    allComments.unshift({ user:'You', time:'Abhi', text:txt, likes:0 });
+    buildComments(allComments);
+    document.getElementById('commentInput').value = '';
+    document.getElementById('commentCount').textContent = allComments.length;
+    showToast('💬 Comment post ho gaya! 🎶');
+  });
+}
+
+// ===== NAV =====
+function initNav() {
+  const contactFn = () => alert('📞 EntertainHub Support\nsupport@entertainhub.com\n+92 300 123 4567');
+  document.getElementById('contactNav')?.addEventListener('click', e => { e.preventDefault(); contactFn(); });
+  document.getElementById('footerContactLink')?.addEventListener('click', e => { e.preventDefault(); contactFn(); });
+}
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded', () => {
+  buildRelated();
+  initActions();
+  initComments();
+  initNav();
+
+  setTimeout(() => {
+    const lb = document.getElementById('loadBar');
+    if (lb) { lb.style.opacity = '0'; setTimeout(() => lb.remove(), 400); }
+  }, 1000);
+});
+</script>
+</body>
+</html>
