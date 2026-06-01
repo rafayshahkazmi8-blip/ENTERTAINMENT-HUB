@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Anime | EntertainHub — Dark Pulse</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #0a060f;
+      font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+      color: #f0eaff;
+      overflow-x: hidden;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #1e1828; }
+    ::-webkit-scrollbar-thumb { background: #b77cff; border-radius: 12px; }
+    ::-webkit-scrollbar-thumb:hover { background: #d69eff; }
+
+    @keyframes floatTilt {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-6px) rotate(0.5deg); }
+    }
+    @keyframes orb {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(45px, 35px) scale(1.1); }
+    }
+    @keyframes shimmer {
+      0% { background-position: -200% center; }
+      100% { background-position: 200% center; }
+    }
+
+    .app {
+      background: radial-gradient(circle at 20% 10%, #110b1a, #050308);
+      min-height: 100vh;
+    }
+
+    .orb-wrap {
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none; z-index: 0; overflow: hidden;
+    }
+    .orb {
+      position: absolute; border-radius: 50%;
+      filter: blur(110px); animation: orb 18s infinite alternate;
+    }
+    .orb-1 { width: 550px; height: 550px; background: #5c1d9e; top: -180px; left: -120px; opacity: 0.3; }
+    .orb-2 { width: 600px; height: 600px; background: #2d0060; bottom: -200px; right: -150px; opacity: 0.22; animation-delay: -6s; }
+    .orb-3 { width: 420px; height: 420px; background: #7a3db5; top: 40%; left: 55%; opacity: 0.15; animation-delay: -10s; }
+    .orb-4 { width: 350px; height: 350px; background: #3d0070; top: 65%; left: 5%; opacity: 0.18; animation-delay: -14s; }
+
+    button { cursor: pointer; font-family: inherit; }
+
+    /* NAVBAR */
+    .navbar {
+      position: sticky; top: 0; z-index: 30;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1.1rem 3rem;
+      max-width: 1400px; margin: 0 auto; width: 100%;
+      backdrop-filter: blur(14px);
+      background: rgba(10,6,18,0.8);
+      border-bottom: 1px solid rgba(183,124,255,0.12);
+    }
+    .logo {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 1.7rem; font-weight: 800; letter-spacing: -0.5px;
+      background: linear-gradient(125deg, #d6aaff, #b77cff, #9d4edd);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      text-decoration: none; transition: transform 0.25s;
+    }
+    .logo:hover { transform: scale(1.02); }
+    .nav-links { display: flex; gap: 1.5rem; align-items: center; flex-wrap: wrap; }
+    .nav-links a {
+      color: #e2d6ff; text-decoration: none; font-weight: 500;
+      transition: 0.2s; position: relative; font-size: 0.95rem;
+    }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: -4px; left: 0;
+      width: 0; height: 2px; background: #b77cff;
+      transition: width 0.3s ease; border-radius: 2px;
+    }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-links a:hover { color: #fff; }
+    .nav-links a.active { color: #d69eff; }
+    .nav-links a.active::after { width: 100%; }
+    .contact-btn {
+      background: rgba(183,124,255,0.18) !important;
+      padding: 0.45rem 1.3rem; border-radius: 40px;
+      border: 1px solid rgba(183,124,255,0.5) !important;
+      transition: all 0.2s !important;
+    }
+    .contact-btn:hover {
+      background: #b77cff !important; color: #0a060f !important;
+      transform: translateY(-2px); box-shadow: 0 6px 18px rgba(183,124,255,0.5);
+    }
+    .contact-btn::after { display: none !important; }
+
+    /* PAGE INNER */
+    .page-inner {
+      max-width: 1400px; margin: 0 auto;
+      padding: 3rem 2.5rem 6rem;
+      position: relative; z-index: 10;
+    }
+
+    /* PAGE HERO */
+    .page-hero { text-align: center; margin-bottom: 3rem; }
+    .hero-badge {
+      background: linear-gradient(95deg, #441e6e, #2c0f54);
+      display: inline-block; padding: 0.3rem 1.2rem;
+      border-radius: 60px; font-size: 0.85rem; font-weight: 600;
+      margin-bottom: 1.2rem; border: 1px solid #b77cff; letter-spacing: 0.5px;
+      animation: floatTilt 3s infinite ease;
+    }
+    .page-hero h1 {
+      font-size: 3.2rem; font-weight: 800;
+      background: linear-gradient(to right, #f0eaff, #cbaaff, #e3c9ff);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      margin-bottom: 0.8rem;
+    }
+    .page-hero p { color: #bc9eff; font-size: 1rem; }
+
+    /* STATS */
+    .stats-bar {
+      display: flex; justify-content: center; gap: 1.2rem;
+      flex-wrap: wrap; margin: 2rem 0 2.5rem;
+    }
+    .stat-item {
+      background: rgba(25,15,45,0.7); backdrop-filter: blur(14px);
+      padding: 0.75rem 1.5rem; border-radius: 60px;
+      border: 1px solid rgba(157,78,221,0.4); transition: all 0.3s;
+      text-align: center;
+    }
+    .stat-item:hover { border-color: #b77cff; transform: translateY(-3px); }
+    .stat-item h3 { font-size: 1.3rem; font-weight: 800; color: #d69eff; }
+    .stat-item p { font-size: 0.68rem; color: #a89fc8; }
+
+    /* SECTION HEADER */
+    .section-header { margin-bottom: 2rem; }
+    .section-header h2 {
+      font-size: 1.9rem; font-weight: 700;
+      border-left: 5px solid #b77cff; padding-left: 1rem;
+    }
+    .section-header p { margin-top: 5px; color: #bc9eff; padding-left: 1.2rem; }
+
+    /* SEARCH BAR */
+    .search-wrap {
+      display: flex; justify-content: center; margin-bottom: 2.5rem;
+    }
+    .search-box {
+      display: flex; align-items: center; gap: 0.6rem;
+      background: rgba(25,15,45,0.8); backdrop-filter: blur(12px);
+      border: 1px solid rgba(183,124,255,0.35); border-radius: 48px;
+      padding: 0.6rem 1.2rem; width: 100%; max-width: 500px;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .search-box:focus-within {
+      border-color: #b77cff;
+      box-shadow: 0 0 0 3px rgba(183,124,255,0.2);
+    }
+    .search-box input {
+      background: transparent; border: none; outline: none;
+      color: #f0eaff; font-size: 0.95rem; width: 100%; font-family: inherit;
+    }
+    .search-box input::placeholder { color: #7a6ea0; }
+    .search-icon { color: #b77cff; font-size: 1rem; flex-shrink: 0; }
+
+    /* ANIME GRID */
+    .anime-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.4rem; margin: 1rem 0 3rem;
+    }
+
+    /* ANIME CARD */
+    .anime-card {
+      background: #181125; border-radius: 22px; overflow: hidden;
+      border: 1px solid rgba(157,78,221,0.3);
+      transition: transform 0.35s cubic-bezier(0.2,0.9,0.4,1.1), box-shadow 0.3s, border-color 0.3s;
+      cursor: pointer; text-decoration: none; display: block; color: inherit;
+      position: relative;
+    }
+    .anime-card:hover {
+      transform: translateY(-10px) scale(1.02);
+      box-shadow: 0 24px 40px -10px rgba(155,77,255,0.5);
+      border-color: #b77cff;
+    }
+
+    .anime-poster {
+      width: 100%; aspect-ratio: 2/3;
+      object-fit: cover; object-position: center;
+      display: block;
+      transition: filter 0.4s, transform 0.4s;
+    }
+    .anime-card:hover .anime-poster {
+      filter: brightness(0.55) saturate(1.2);
+      transform: scale(1.05);
+    }
+
+    /* RANK BADGE */
+    .rank-badge {
+      position: absolute; top: 10px; left: 10px;
+      background: linear-gradient(95deg, #9b4dff, #b77cff);
+      color: #0f0717; font-size: 0.68rem; font-weight: 800;
+      padding: 0.22rem 0.65rem; border-radius: 30px;
+      letter-spacing: 0.3px;
+    }
+
+    /* PLAY OVERLAY */
+    .play-overlay {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 0.6rem; opacity: 0; transition: opacity 0.25s;
+    }
+    .anime-card:hover .play-overlay { opacity: 1; }
+    .play-btn {
+      background: #b77cff; width: 54px; height: 54px;
+      border-radius: 50%; display: flex;
+      align-items: center; justify-content: center;
+      font-size: 1.4rem;
+      box-shadow: 0 0 24px rgba(183,124,255,0.8);
+      transform: scale(0.85); transition: transform 0.25s;
+    }
+    .anime-card:hover .play-btn { transform: scale(1); }
+    .play-label {
+      background: rgba(10,6,18,0.85); backdrop-filter: blur(6px);
+      font-size: 0.72rem; font-weight: 700; color: #d69eff;
+      padding: 0.3rem 0.9rem; border-radius: 30px;
+      border: 1px solid rgba(183,124,255,0.4);
+    }
+
+    /* CARD INFO */
+    .card-info { padding: 0.85rem 0.9rem 1rem; background: #1c132a; }
+    .card-title {
+      font-weight: 700; font-size: 0.88rem; color: #f0eaff;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      margin-bottom: 0.3rem;
+    }
+    .card-meta { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+    .card-genre {
+      background: rgba(155,77,255,0.18); border: 1px solid rgba(183,124,255,0.28);
+      padding: 0.15rem 0.6rem; border-radius: 20px;
+      font-size: 0.63rem; color: #c9aaff; font-weight: 600;
+    }
+    .card-rating { font-size: 0.68rem; color: #ffd700; margin-left: auto; }
+
+    /* NO RESULTS */
+    .no-results {
+      text-align: center; padding: 4rem 2rem;
+      color: #7a6ea0; font-size: 1.1rem; display: none;
+      grid-column: 1 / -1;
+    }
+
+    /* CTA STRIP */
+    .cta-strip {
+      background: linear-gradient(135deg, rgba(155,77,255,0.12), rgba(70,30,110,0.2));
+      border-radius: 2.5rem; padding: 2.5rem 2rem;
+      text-align: center; margin: 2rem 0;
+      border: 1px solid rgba(183,124,255,0.3);
+    }
+    .cta-strip h2 {
+      font-size: 1.7rem; font-weight: 700; margin-bottom: 0.5rem;
+      background: linear-gradient(to right, #f0eaff, #cbaaff);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .cta-strip p { color: #bc9eff; margin-bottom: 1.4rem; }
+    .email-form {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 0.8rem;
+      max-width: 520px; margin: 0 auto;
+    }
+    .email-form input {
+      flex: 1; padding: 0.9rem 1.3rem;
+      background: rgba(20,12,32,0.85); border: 1px solid #3d2a5e;
+      border-radius: 48px; color: white; font-size: 0.95rem;
+      transition: all 0.3s; font-family: inherit;
+    }
+    .email-form input:focus {
+      border-color: #b77cff; outline: none;
+      box-shadow: 0 0 0 3px rgba(183,124,255,0.3);
+    }
+    .email-form button {
+      background: linear-gradient(95deg, #9b4dff, #b77cff);
+      border: none; padding: 0.9rem 1.8rem;
+      border-radius: 48px; color: #0f0717;
+      font-weight: 700; font-size: 0.95rem; transition: all 0.25s;
+    }
+    .email-form button:hover {
+      transform: scale(1.03) translateY(-2px);
+      box-shadow: 0 10px 24px rgba(155,77,255,0.5);
+    }
+
+    /* FOOTER */
+    .footer-section {
+      text-align: center; padding: 2rem;
+      border-top: 1px solid rgba(183,124,255,0.15);
+      margin-top: 2rem;
+    }
+    .footer-links {
+      max-width: 900px; margin: 1.4rem auto 0;
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem 2rem;
+    }
+    .footer-links a { color: #9580be; text-decoration: none; font-size: 0.82rem; transition: color 0.2s; }
+    .footer-links a:hover { color: #d6b0ff; }
+    .copy { padding: 1.2rem; font-size: 0.72rem; color: #544b6e; }
+
+    [data-aos] { transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+
+    @media (max-width: 1100px) {
+      .anime-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 760px) {
+      .navbar { padding: 1rem 1.2rem; }
+      .page-hero h1 { font-size: 2.1rem; }
+      .anime-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+      .page-inner { padding: 2rem 1.2rem 4rem; }
+    }
+    @media (max-width: 480px) {
+      .anime-grid { grid-template-columns: repeat(2, 1fr); gap: 0.8rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <div class="orb-wrap">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="orb orb-4"></div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav>
+    <div class="navbar">
+      <a class="logo" href="home.html">🎭 ENHUB</a>
+      <div class="nav-links">
+        <a href="home.html">🏠 Home</a>
+        <a href="about.html">ℹ️ About</a>
+        <a href="movies.html">🎬 Trending Movies</a>
+        <a href="anime.html" class="active">🐉 Anime</a>
+        <a href="Contact.html" class="contact-btn">📞 Contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page-inner">
+
+    <!-- HERO -->
+    <div class="page-hero" data-aos="fade-up" data-aos-duration="800">
+      <div class="hero-badge">🐉 Anime Universe</div>
+      <h1>Watch Top Anime Series ✨</h1>
+      <p>Hand-picked classics & ongoing hits &bull; Updated weekly &bull; 20+ Titles</p>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-bar" data-aos="fade-up" data-aos-delay="60">
+      <div class="stat-item"><h3>20+</h3><p>Top Anime</p></div>
+      <div class="stat-item"><h3>500+</h3><p>Episodes</p></div>
+      <div class="stat-item"><h3>8M+</h3><p>Views</p></div>
+      <div class="stat-item"><h3>⭐ 4.9</h3><p>Avg Rating</p></div>
+    </div>
+
+    <!-- SEARCH -->
+    <div class="search-wrap" data-aos="fade-up" data-aos-delay="80">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="Search anime by name...">
+      </div>
+    </div>
+
+    <!-- SECTION HEADER -->
+    <div class="section-header" data-aos="fade-right">
+      <h2>🔥 All Anime</h2>
+      <p>Click any card to start watching</p>
+    </div>
+
+    <!-- ANIME GRID -->
+    <div class="anime-grid" id="animeGrid">
+
+      <a class="anime-card" href="play.html" data-title="Jujutsu Kaisen" data-aos="zoom-in-up" data-aos-delay="0">
+        <img class="anime-poster" src="https://i.pinimg.com/1200x/d2/f5/18/d2f5181a6484b576bc801b7468f37a3c.jpg" alt="Jujutsu Kaisen" loading="lazy" onerror="this.src='https://via.placeholder.com/300x450?text=Poster'">
+        <div class="rank-badge">#1</div>
+        <div class="play-overlay">
+          <div class="play-btn">▶</div>
+          <div class="play-label">Watch Now</div>
+        </div>
+        <div class="card-info">
+          <div class="card-title">Jujutsu Kaisen</div>
+          <div class="card-meta">
+            <span class="card-genre">Action</span>
+            <span class="card-genre">Dark Fantasy</span>
+            <span class="card-rating">⭐ 9.0</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="anime-card" href="play.html" data-title="Death Note" data-aos="zoom-in-up" data-aos-delay="40">
+        <img class="anime-poster" src="https://i.pinimg.com/1200x/5c/ef/fe/5ceffe25ba481df89e8bcdd9035cfe45.jpg" alt="Death Note" loading="lazy" onerror="this.src='https://via.placeholder.com/300x450?text=Poster'">
+        <div class="rank-badge">#2</div>
+        <div class="play-overlay">
+          <div class="play-btn">▶</div>
+          <div class="play-label">Watch Now</div>
+        </div>
+        <div class="card-info">
+          <div class="card-title">Death Note</div>
+          <div class="card-meta">
+            <span class="card-genre">Thriller</span>
+            <span class="card-genre">Mystery</span>
+            <span class="card-rating">⭐ 9.8</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="anime-card" href="play.html" data-title="You Lie in April" data-aos="zoom-in-up" data-aos-delay="80">
+        <img class="anime-poster" src="https://i.pinimg.com/736x/a2/54/ab/a254abc4a3e30ceb88c2c5884c0107ae.jpg" alt="You Lie in April" loading="lazy" onerror="this.src='https://via.placeholder.com/300x450?text=Poster'">
+        <div class="rank-badge">#3</div>
+        <div class="play-overlay">
+          <div class="play-btn">▶</div>
+          <div class="play-label">Watch Now</div>
+        </div>
+        <div class="card-info">
+          <div class="card-title">You Lie in April</div>
+          <div class="card-meta">
+            <span class="card-genre">Romance</span>
+            <span class="card-genre">Music</span>
+            <span class="card-rating">⭐ 9.2</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="anime-card" href="play.html" data-title="Attack on Titan" data-aos="zoom-in-up" data-aos-delay="120">
+        <img class="anime-poster" src="https://i.pinimg.com/736x/23/fb/0d/23fb0d755d4f8f6fe39e1275ac1401dc.jpg" alt="Attack on Titan" loading="lazy" onerror="this.src='https://via.placeholder.com/300x450?text=Poster'">
+        <div class="rank-badge">#4</div>
+        <div class="play-overlay">
+          <div class="play-btn">▶</div>
+          <div class="play-label">Watch Now</div>
+        </div>
+        <div class="card-info">
+          <div class="card-title">Attack on Titan</div>
+          <div class="card-meta">
+            <span class="card-genre">Action</span>
+            <span class="card-genre">Drama</span>
+            <span class="card-rating">⭐ 9.9</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="anime-card" href="play.html" data-title="Demon Slayer" data-aos="zoom-in-up" data-aos-delay="0">
+        <img class="anime-poster" src="https://i.pinimg.com/736x/4d/e6/31/4de63138ca8c66f37f02d94fb97b8191.jpg" alt="Demon Slayer" loading="lazy" onerror="this.src='https://via.placeholder.com/300x450?text=Poster'">
+        <div class="rank-badge">#5</div>
+        <div class="play-overlay">
+          <div class="play-btn">▶</div>
+          <div class="play-label">Watch Now</div>
+        </div>
+        <div class="card-info">
+          <div class="card-title">Demon Slayer</div>
+          <div class="card-meta">
+            <span class="card-genre">Action</span>
+            <span class="card-genre">Supernatural</span>
+            <span class="card-rating">⭐ 9.7</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="anime-card" href="play.html" data-title="Naruto" data-aos="zoom-in-up" data-aos-delay="40">
+        <img class="anime-poster" src="https://i.pinimg.com/736x/49/0a/ca/490aca920d9cebe11c6e23a921f3cdcc.jpg" alt="Naruto" loading="lazy" onerror="this.src='https://via.placeholder.com/300x450?text=Poster'">
+        <div class="rank-badge">#6</div>
+        <div class="play-overlay">
+          <div class="play-btn">▶</div>
+          <div class="play-label">Watch Now</div>
+        </div>
+        <div class="card-info">
+          <div class="card-title">Naruto</div>
+          <div class="card-meta">
+            <span class="card-genre">Adventure</span>
+            <span class="card-genre">Ninja</span>
+            <span class="card-rating">⭐ 9.3</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="anime-card" href="play.html" data-title="Naruto Shippuden" data-aos="zoom-in-up" data-aos-delay="80">
+        <img class="anime-poster" src="https://i.pinimg.com/1200x/6f/ad/3f/6fad3f2d0567bebd2b7f7b05fb9428b1.jpg" alt="Naruto Shippuden" loading="lazy" onerror="this.src='https://via.placeholder.com/300x450?text=Poster'">
+        <div class="rank-badge">#7</div>
+        <div class="play-overlay">
+          <div class="play-btn">▶</div>
+          <div class="play-label">Watch Now</div>
+        </div>
+        <div class="card-info">
+          <div class="card-title">Naruto Shippuden</div>
+          <div class="card-meta">
+            <span class="card-genre">Adventure</span>
+            <span class="card-genre">Action</span>
+            <span class="card-rating">⭐ 9.5</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="anime-card" href="play.html" data-title="Bleach" data-aos="zoom-in-up" data-aos-delay="120">
+        <img class="anime-poster" src="https://i.pinimg.com/736x/be/26/ac/be26ac00d4888324826d9c81ed2cbef6.jpg" alt="Bleach" loading="lazy" onerror="this.src='https://via.placeholder.com/300x450?text=Poster'">
+        <div class="rank-badge">#8</div>
+        <div class="play-overlay">
+          <div class="play-btn">▶</div>
+          <div class="play-label">Watch Now</div>
+        </div>
+        <div class="card-info">
+          <div class="card-title">Bleach</div>
+          <div class="card-meta">
+            <span class="card-genre">Action</span>
+            <span class="card-genre">Soul Reaper</span>
+            <span class="card-rating">⭐ 9.1</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="anime-card" href="play.html" data-title="One Piece" data-aos="zoom-in-up" data-aos-delay="0">
+        <img class="anime-poster" src="https://i.pinimg.com/736x/8e/26/f6/8e26f6d13a84977811baf940f7399d21.jpg" alt="One Piece" loading="lazy" onerror="this.src='https://via.placeholder.com/300x450?text=Poster'">
+        <div class="rank-badge">#9</div>
+        <div class="play-overlay">
+          <div class="play-btn">▶</div>
+          <div class="play-label">Watch Now</div>
+        </div>
+        <div class="card-info">
+          <div class="card-title">One Piece</div>
+          <div class="card-meta">
+            <span class="card-genre">Adventure</span>
+            <span class="card-genre">Pirate</span>
+            <span class="card-rating">⭐ 9.9</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="anime-card" href="play.html" data-title="Gintama" data-aos="zoom-in-up" data-aos-delay="40">
+        <img class="anime-poster" src="https://i.pinimg.com/736x/3f/47/6c/3f476c71bafa65c3a1b1ec679b418652.jpg" alt="Gintama" loading="lazy" onerror="this.src='https://via.placeholder.com/300x450?text=Poster'">
+        <div class="rank-badge">#10</div>
+        <div class="play-overlay">
+          <div class="play-btn">▶</div>
+          <div class="play-label">Watch Now</div>
+        </div>
+        <div class="card-info">
+          <div class="card-title">Gintama</div>
+          <div class="card-meta">
+            <span class="card-genre">Comedy</span>
+            <span class="card-genre">Samurai</span>
+            <span class="card-rating">⭐ 9.4</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="anime-card" href="play.html" data-title="Tokyo Revengers" data-aos="zoom-in-up" data-aos-delay="80">
+        <img class="anime-poster" src="https://i.pinimg.com/736x/54/bd/51/54bd5156411ea051bdbc2f185a534a16.jpg" alt="Tokyo Revengers" loading="lazy" onerror="this.src='https://via.placeholder.com/300x450?text=Poster'">
+        <div class="rank-badge">#11</div>
+        <div class="play-overlay">
+          <div class="play-btn">▶</div>
+          <div class="play-label">Watch Now</div>
+        </div>
+        <div class="card-info">
+          <div class="card-title">Tokyo Revengers</div>
+          <div class="card-meta">
+            <span class="card-genre">Action</span>
+            <span class="card-genre">Time Travel</span>
+            <span class="card-rating">⭐ 8.8</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="anime-card" href="play.html" data-title="Tokyo Ghoul" data-aos="zoom-in-up" data-aos-delay="120">
+        <img class="anime-poster" src="https://i.pinimg.com/736x/32/56/01/3256017a0dfaf2eaea9f008a3c207b5f.jpg" alt="Tokyo Ghoul" loading="lazy" onerror="this.src='https://via.placeholder.com/300x450?text=Poster'">
+        <div class="rank-badge">#12</div>
+        <div class="play-overlay">
+          <div class="play-btn">▶</div>
+          <div class="play-label">Watch Now</div>
+        </div>
+        <div class="card-info">
+          <div class="card-title">Tokyo Ghoul</div>
+          <div class="card-meta">
+            <span class="card-genre">Horror</span>
+            <span class="card-genre">Dark</span>
+            <span class="card-rating">⭐ 8.9</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="anime-card" href="play.html" data-title="Blue Lock" data-aos="zoom-in-up" data-aos-delay="0">
+        <img class="anime-poster" src="https://i.pinimg.com/736x/8a/ab/a3/8aaba3cf37115dfb5cf3121050eb853b.jpg" alt="Blue Lock" loading="lazy" onerror="this.src='https://via.placeholder.com/300x450?text=Poster'">
+        <div class="rank-badge">#13</div>
+        <div class="play-overlay">
+          <div class="play-btn">▶</div>
+          <div class="play-label">Watch Now</div>
+        </div>
+        <div class="card-info">
+          <div class="card-title">Blue Lock</div>
+          <div class="card-meta">
+            <span class="card-genre">Sports</span>
+            <span class="card-genre">Football</span>
+            <span class="card-rating">⭐ 9.0</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="anime-card" href="play.html" data-title="Vinland Saga" data-aos="zoom-in-up" data-aos-delay="40">
+        <img class="anime-poster" src="https://i.pinimg.com/1200x/cd/b3/e1/cdb3e1ddcca1fdaa27d8e61e7ea3ae49.jpg" alt="Vinland Saga" loading="lazy" onerror="this.src='https://via.placeholder.com/300x450?text=Poster'">
+        <div class="rank-badge">#14</div>
+        <div class="play-overlay">
+          <div class="play-btn">▶</div>
+          <div class="play-label">Watch Now</div>
+        </div>
+        <div class="card-info">
+          <div class="card-title">Vinland Saga</div>
+          <div class="card-meta">
+            <span class="card-genre">Historical</span>
+            <span class="card-genre">Action</span>
+            <span class="card-rating">⭐ 9.6</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="anime-card" href="play.html" data-title="Dragon Ball Z" data-aos="zoom-in-up" data-aos-delay="80">
+        <img class="anime-poster" src="https://i.pinimg.com/736x/7e/f8/23/7ef823654c89ac192e945e34412b79f8.jpg" alt="Dragon Ball Z" loading="lazy" onerror="this.src='https://via.placeholder.com/300x450?text=Poster'">
+        <div class="rank-badge">#15</div>
+        <div class="play-overlay">
+          <div class="play-btn">▶</div>
+          <div class="play-label">Watch Now</div>
+        </div>
+        <div class="card-info">
+          <div class="card-title">Dragon Ball Z</div>
+          <div class="card-meta">
+            <span class="card-genre">Action</span>
+            <span class="card-genre">Classic</span>
+            <span class="card-rating">⭐ 9.5</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="anime-card" href="play.html" data-title="Solo Leveling" data-aos="zoom-in-up" data-aos-delay="120">
+        <img class="anime-poster" src="https://i.pinimg.com/736x/96/07/4b/96074bbb3effa3d9a2c819b9fe4e735d.jpg" alt="Solo Leveling" loading="lazy" onerror="this.src='https://via.placeholder.com/300x450?text=Poster'">
+        <div class="rank-badge">#16</div>
+        <div class="play-overlay">
+          <div class="play-btn">▶</div>
+          <div class="play-label">Watch Now</div>
+        </div>
+        <div class="card-info">
+          <div class="card-title">Solo Leveling</div>
+          <div class="card-meta">
+            <span class="card-genre">Fantasy</span>
+            <span class="card-genre">Hunter</span>
+            <span class="card-rating">⭐ 9.3</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="anime-card" href="play.html" data-title="Jujutsu Kaisen 2" data-aos="zoom-in-up" data-aos-delay="0">
+        <img class="anime-poster" src="https://i.pinimg.com/736x/eb/77/6b/eb776b5777662678a008c3b946572288.jpg" alt="Jujutsu Kaisen 2" loading="lazy" onerror="this.src='https://via.placeholder.com/300x450?text=Poster'">
+        <div class="rank-badge">#17</div>
+        <div class="play-overlay">
+          <div class="play-btn">▶</div>
+          <div class="play-label">Watch Now</div>
+        </div>
+        <div class="card-info">
+          <div class="card-title">Jujutsu Kaisen 2</div>
+          <div class="card-meta">
+            <span class="card-genre">Action</span>
+            <span class="card-genre">Dark Fantasy</span>
+            <span class="card-rating">⭐ 9.7</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="anime-card" href="play.html" data-title="Boruto" data-aos="zoom-in-up" data-aos-delay="40">
+        <img class="anime-poster" src="https://i.pinimg.com/1200x/13/5a/d2/135ad23f1aafce8d2690f2a9966faf9c.jpg" alt="Boruto" loading="lazy" onerror="this.src='https://via.placeholder.com/300x450?text=Poster'">
+        <div class="rank-badge">#18</div>
+        <div class="play-overlay">
+          <div class="play-btn">▶</div>
+          <div class="play-label">Watch Now</div>
+        </div>
+        <div class="card-info">
+          <div class="card-title">Boruto</div>
+          <div class="card-meta">
+            <span class="card-genre">Adventure</span>
+            <span class="card-genre">Ninja</span>
+            <span class="card-rating">⭐ 8.5</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="anime-card" href="play.html" data-title="My Hero Academia" data-aos="zoom-in-up" data-aos-delay="80">
+        <img class="anime-poster" src="https://i.pinimg.com/736x/57/d4/66/57d466c0156e1e60b702eb7d7fdb4abb.jpg" alt="My Hero Academia" loading="lazy" onerror="this.src='https://via.placeholder.com/300x450?text=Poster'">
+        <div class="rank-badge">#19</div>
+        <div class="play-overlay">
+          <div class="play-btn">▶</div>
+          <div class="play-label">Watch Now</div>
+        </div>
+        <div class="card-info">
+          <div class="card-title">My Hero Academia</div>
+          <div class="card-meta">
+            <span class="card-genre">Superhero</span>
+            <span class="card-genre">Action</span>
+            <span class="card-rating">⭐ 9.0</span>
+          </div>
+        </div>
+      </a>
+
+      <a class="anime-card" href="play.html" data-title="Hunter x Hunter" data-aos="zoom-in-up" data-aos-delay="120">
+        <img class="anime-poster" src="https://i.pinimg.com/736x/4e/f4/49/4ef449430cad947f701df3c2bbae38c9.jpg" alt="Hunter x Hunter" loading="lazy" onerror="this.src='https://via.placeholder.com/300x450?text=Poster'">
+        <div class="rank-badge">#20</div>
+        <div class="play-overlay">
+          <div class="play-btn">▶</div>
+          <div class="play-label">Watch Now</div>
+        </div>
+        <div class="card-info">
+          <div class="card-title">Hunter x Hunter</div>
+          <div class="card-meta">
+            <span class="card-genre">Adventure</span>
+            <span class="card-genre">Fantasy</span>
+            <span class="card-rating">⭐ 9.8</span>
+          </div>
+        </div>
+      </a>
+
+      <div class="no-results" id="noResults">😔 No anime found matching your search.</div>
+
+    </div><!-- /anime-grid -->
+
+    <!-- CTA STRIP -->
+    <div class="cta-strip" data-aos="fade-up">
+      <h2>🎙️ Join the Primal Wave</h2>
+      <p>Get weekly anime recommendations, new episode alerts, and exclusive content!</p>
+      <div class="email-form">
+        <input type="email" id="ctaEmail" placeholder="Enter your email">
+        <button id="ctaBtn">Subscribe →</button>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer-section">
+      <p style="color:#7a6ea0; font-size:0.85rem;">© 2025 EntertainHub — Where Fun Never Ends &nbsp;❤️&nbsp; 20+ Anime &amp; Growing</p>
+      <div class="footer-links">
+        <a href="#">Help</a>
+        <a href="#">FAQ</a>
+        <a href="#">Terms</a>
+        <a href="#">Privacy</a>
+        <a href="#">Contact Support</a>
+        <a href="#">Gift Cards</a>
+        <a href="#">Media Centre</a>
+        <a href="Contact.html">📞 Contact Us 24/7</a>
+      </div>
+      <div class="copy">Follow us for daily anime updates and reviews</div>
+    </div>
+
+  </div><!-- /page-inner -->
+
+</div>
+
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+  AOS.init({ duration: 700, once: true, offset: 20, easing: 'ease-out-quad' });
+
+  // Search filter
+  const searchInput = document.getElementById('searchInput');
+  const cards = document.querySelectorAll('.anime-card');
+  const noResults = document.getElementById('noResults');
+
+  searchInput.addEventListener('input', () => {
+    const q = searchInput.value.toLowerCase().trim();
+    let visible = 0;
+    cards.forEach(card => {
+      const title = card.getAttribute('data-title').toLowerCase();
+      const show = title.includes(q);
+      card.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+    noResults.style.display = visible === 0 ? 'block' : 'none';
+  });
+
+  // Subscribe
+  document.getElementById('ctaBtn').addEventListener('click', () => {
+    const email = document.getElementById('ctaEmail').value.trim();
+    const input = document.getElementById('ctaEmail');
+    if (email.includes('@') && email.includes('.')) {
+      input.value = '';
+      input.placeholder = '✅ Subscribed!';
+      setTimeout(() => { input.placeholder = 'Enter your email'; }, 2500);
+    } else {
+      input.style.borderColor = '#ff4d8a';
+      setTimeout(() => { input.style.borderColor = ''; }, 1500);
+    }
+  });
+</script>
+</body>
+</html>
