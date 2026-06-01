@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Trending Movies | EntertainHub — Dark Pulse</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #0a060f;
+      font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+      color: #f0eaff;
+      overflow-x: hidden;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #1e1828; }
+    ::-webkit-scrollbar-thumb { background: #b77cff; border-radius: 12px; }
+    ::-webkit-scrollbar-thumb:hover { background: #d69eff; }
+
+    @keyframes floatTilt {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-5px) rotate(0.5deg); }
+    }
+
+    @keyframes orb {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(40px, 30px) scale(1.08); }
+    }
+
+    .app {
+      max-width: 100%;
+      background: radial-gradient(circle at 20% 10%, #110b1a, #050308);
+      min-height: 100vh;
+    }
+
+    /* ORB BG */
+    .orb-wrap {
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none; z-index: 0; overflow: hidden;
+    }
+    .orb {
+      position: absolute; border-radius: 50%;
+      filter: blur(110px); animation: orb 18s infinite alternate;
+    }
+    .orb-1 { width: 550px; height: 550px; background: #5c1d9e; top: -180px; left: -120px; opacity: 0.28; }
+    .orb-2 { width: 600px; height: 600px; background: #2d0060; bottom: -200px; right: -150px; opacity: 0.22; animation-delay: -6s; }
+    .orb-3 { width: 420px; height: 420px; background: #7a3db5; top: 40%; left: 55%; opacity: 0.14; animation-delay: -10s; }
+
+    button { cursor: pointer; font-family: inherit; }
+
+    /* NAVBAR */
+    .navbar {
+      position: sticky; top: 0; z-index: 30;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1.1rem 3rem;
+      max-width: 1400px; margin: 0 auto; width: 100%;
+      backdrop-filter: blur(14px);
+      background: rgba(10,6,18,0.75);
+      border-bottom: 1px solid rgba(183,124,255,0.12);
+    }
+    .logo {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 1.7rem; font-weight: 800; letter-spacing: -0.5px;
+      background: linear-gradient(125deg, #d6aaff, #b77cff, #9d4edd);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      text-decoration: none; transition: transform 0.25s;
+    }
+    .logo:hover { transform: scale(1.02); }
+    .nav-links { display: flex; gap: 1.5rem; align-items: center; flex-wrap: wrap; }
+    .nav-links a {
+      color: #e2d6ff; text-decoration: none; font-weight: 500;
+      transition: 0.2s; position: relative; font-size: 0.95rem;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: -4px; left: 0;
+      width: 0; height: 2px; background: #b77cff;
+      transition: width 0.3s ease; border-radius: 2px;
+    }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-links a:hover { color: #ffffff; }
+    .nav-links a.active { color: #d69eff; }
+    .nav-links a.active::after { width: 100%; }
+    .contact-btn {
+      background: rgba(183,124,255,0.18) !important;
+      backdrop-filter: blur(8px);
+      padding: 0.45rem 1.3rem; border-radius: 40px;
+      border: 1px solid rgba(183,124,255,0.5) !important;
+      transition: background 0.2s, transform 0.2s, box-shadow 0.2s !important;
+    }
+    .contact-btn:hover {
+      background: #b77cff !important; color: #0a060f !important;
+      transform: translateY(-2px); box-shadow: 0 6px 18px rgba(183,124,255,0.5);
+    }
+    .contact-btn::after { display: none !important; }
+
+    /* PAGE WRAPPER */
+    .page-inner {
+      max-width: 1400px; margin: 0 auto;
+      padding: 3rem 2.5rem 6rem;
+      position: relative; z-index: 10;
+    }
+
+    /* HERO HEADER */
+    .page-hero {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    .hero-badge {
+      background: linear-gradient(95deg, #441e6e, #2c0f54);
+      backdrop-filter: blur(12px); display: inline-block;
+      padding: 0.3rem 1.2rem; border-radius: 60px;
+      font-size: 0.85rem; font-weight: 600; margin-bottom: 1.2rem;
+      border: 1px solid #b77cff; letter-spacing: 0.5px;
+      animation: floatTilt 3s infinite ease;
+    }
+    .page-hero h1 {
+      font-size: 3.2rem; font-weight: 800;
+      background: linear-gradient(to right, #f0eaff, #cbaaff, #e3c9ff);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+      margin-bottom: 0.8rem;
+    }
+    .page-hero p {
+      color: #bc9eff; font-size: 1rem;
+    }
+
+    /* STATS BAR */
+    .stats-bar {
+      display: flex; justify-content: center; gap: 1.2rem;
+      flex-wrap: wrap; margin: 2rem 0 3rem;
+    }
+    .stat-item {
+      background: rgba(25,15,45,0.7); backdrop-filter: blur(14px);
+      padding: 0.8rem 1.6rem; border-radius: 60px;
+      border: 1px solid rgba(157,78,221,0.4);
+      text-align: center; transition: all 0.3s;
+    }
+    .stat-item:hover { border-color: #b77cff; transform: translateY(-3px); }
+    .stat-item h3 { font-size: 1.4rem; font-weight: 800; color: #d69eff; }
+    .stat-item p { font-size: 0.7rem; color: #a89fc8; }
+
+    /* CATEGORY TABS */
+    .category-tabs {
+      display: flex; justify-content: center;
+      gap: 0.6rem; flex-wrap: wrap; margin-bottom: 3rem;
+    }
+    .category-btn {
+      background: rgba(25,15,45,0.6); backdrop-filter: blur(8px);
+      border: 1px solid rgba(157,78,221,0.35);
+      padding: 0.5rem 1.2rem; border-radius: 40px;
+      color: #cdb5ff; font-weight: 500; font-size: 0.85rem;
+      transition: all 0.3s;
+    }
+    .category-btn:hover {
+      background: rgba(183,124,255,0.2); border-color: #b77cff;
+      color: #f0eaff;
+    }
+    .category-btn.active {
+      background: linear-gradient(95deg, #9b4dff, #b77cff);
+      border-color: transparent; color: #0f0717; font-weight: 700;
+      box-shadow: 0 4px 16px rgba(155,77,255,0.4);
+    }
+
+    /* MOVIES GRID */
+    .movies-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 2rem; margin: 2rem 0;
+    }
+
+    /* MOVIE CARD */
+    .movie-card {
+      background: #181125; border-radius: 24px; overflow: hidden;
+      border: 1px solid rgba(157,78,221,0.3);
+      transition: transform 0.35s cubic-bezier(0.2,0.9,0.4,1.1), box-shadow 0.3s, border-color 0.3s;
+      cursor: pointer;
+    }
+    .movie-card:hover {
+      transform: translateY(-10px) scale(1.02);
+      box-shadow: 0 25px 40px -10px rgba(155,77,255,0.45);
+      border-color: #b77cff;
+    }
+    .movie-poster {
+      width: 100%; height: 380px;
+      background-size: cover; background-position: center;
+      position: relative; overflow: hidden;
+      transition: filter 0.4s;
+    }
+    .movie-card:hover .movie-poster { filter: brightness(0.75) saturate(1.15); }
+    .card-play-overlay {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; transition: opacity 0.25s;
+    }
+    .movie-card:hover .card-play-overlay { opacity: 1; }
+    .play-symbol {
+      background: #b77cff; width: 52px; height: 52px;
+      border-radius: 50%; display: inline-flex;
+      align-items: center; justify-content: center;
+      font-size: 1.3rem; box-shadow: 0 0 20px rgba(183,124,255,0.7);
+      transform: scale(0.85); transition: transform 0.25s;
+    }
+    .movie-card:hover .play-symbol { transform: scale(1); }
+    .trending-badge {
+      position: absolute; top: 12px; right: 12px;
+      background: linear-gradient(95deg, #9b4dff, #b77cff);
+      padding: 0.25rem 0.75rem; border-radius: 40px;
+      font-size: 0.7rem; font-weight: 700; color: #0f0717;
+    }
+    .rating-badge {
+      position: absolute; bottom: 12px; left: 12px;
+      background: rgba(10,6,18,0.8); backdrop-filter: blur(6px);
+      padding: 0.25rem 0.75rem; border-radius: 40px;
+      font-size: 0.72rem; color: #ffd700;
+      border: 1px solid rgba(183,124,255,0.3);
+    }
+    .movie-info { padding: 1rem 1.1rem 1.2rem; background: #1c132a; }
+    .movie-info h3 {
+      font-weight: 700; font-size: 1rem;
+      color: #f0eaff; margin-bottom: 0.25rem;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .movie-year { font-size: 0.72rem; color: #9580be; margin-bottom: 0.5rem; }
+    .genres { display: flex; flex-wrap: wrap; gap: 0.35rem; margin: 0.4rem 0; }
+    .genre {
+      background: rgba(155,77,255,0.18); border: 1px solid rgba(183,124,255,0.3);
+      padding: 0.18rem 0.65rem; border-radius: 30px;
+      font-size: 0.65rem; color: #c9aaff; font-weight: 600;
+    }
+    .movie-desc { font-size: 0.75rem; color: #9580be; line-height: 1.45; margin: 0.4rem 0 0.8rem; }
+    .watch-btn {
+      width: 100%; background: transparent;
+      border: 1px solid rgba(183,124,255,0.4);
+      padding: 0.6rem; border-radius: 40px;
+      color: #c9aaff; font-weight: 600;
+      font-size: 0.8rem; transition: all 0.3s;
+      display: flex; align-items: center; justify-content: center; gap: 7px;
+    }
+    .watch-btn:hover {
+      background: linear-gradient(95deg, #9b4dff, #b77cff);
+      color: #0f0717; border-color: transparent;
+      transform: translateY(-2px); box-shadow: 0 8px 20px rgba(155,77,255,0.4);
+    }
+
+    /* NEWSLETTER */
+    .newsletter-section {
+      background: linear-gradient(135deg, rgba(155,77,255,0.12), rgba(70,30,110,0.2));
+      border-radius: 3rem; padding: 3rem 2rem;
+      text-align: center; margin: 4rem 0 2rem;
+      border: 1px solid rgba(183,124,255,0.3);
+    }
+    .newsletter-section h2 {
+      font-size: 1.8rem; font-weight: 700; margin-bottom: 0.6rem;
+      background: linear-gradient(to right, #f0eaff, #cbaaff);
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+    .newsletter-section p { color: #bc9eff; margin-bottom: 1.5rem; }
+    .newsletter-form {
+      display: flex; flex-wrap: wrap;
+      justify-content: center; gap: 0.8rem;
+    }
+    .newsletter-input {
+      padding: 0.9rem 1.4rem; border-radius: 48px;
+      border: 1px solid #3d2a5e; width: 300px;
+      background: rgba(20,12,32,0.85); color: white;
+      font-size: 0.95rem; backdrop-filter: blur(4px);
+      transition: all 0.3s;
+    }
+    .newsletter-input:focus {
+      border-color: #b77cff; outline: none;
+      box-shadow: 0 0 0 3px rgba(183,124,255,0.3);
+    }
+    .newsletter-btn {
+      background: linear-gradient(95deg, #9b4dff, #b77cff);
+      border: none; padding: 0.9rem 2rem;
+      border-radius: 48px; color: #0f0717;
+      font-weight: 700; font-size: 0.95rem; transition: all 0.25s;
+    }
+    .newsletter-btn:hover {
+      transform: scale(1.03) translateY(-2px);
+      box-shadow: 0 12px 25px rgba(155,77,255,0.5);
+      background: linear-gradient(95deg, #b06eff, #ca9eff);
+    }
+
+    /* FOOTER */
+    .footer-section {
+      text-align: center; padding: 2rem 2rem;
+      border-top: 1px solid rgba(183,124,255,0.15);
+      margin-top: 2rem;
+    }
+    .footer-links {
+      max-width: 900px; margin: 1.5rem auto 0;
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem 2rem;
+    }
+    .footer-links a {
+      color: #9580be; text-decoration: none;
+      font-size: 0.82rem; transition: color 0.2s;
+    }
+    .footer-links a:hover { color: #d6b0ff; }
+    .copy { text-align: center; padding: 1.2rem; font-size: 0.72rem; color: #544b6e; }
+
+    /* SECTION BORDER HEADER */
+    .section-header h2 {
+      font-size: 2rem; font-weight: 700;
+      border-left: 5px solid #b77cff; padding-left: 1rem;
+      margin-bottom: 0.4rem;
+    }
+
+    [data-aos] { transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+
+    @media (max-width: 760px) {
+      .navbar { padding: 1rem 1.2rem; }
+      .page-hero h1 { font-size: 2rem; }
+      .movies-grid { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.2rem; }
+      .movie-poster { height: 330px; }
+      .page-inner { padding: 2rem 1.2rem 4rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ORB BACKGROUND -->
+  <div class="orb-wrap">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <!-- NAVBAR -->
+  <nav>
+    <div class="navbar">
+      <a class="logo" href="home.html">🎭 ENHUB</a>
+      <div class="nav-links">
+        <a href="home.html">🏠 Home</a>
+        <a href="anime.html">🐉 Anime</a>
+        <a href="movies.html" class="active">🎬 Trending Movies</a>
+        <a href="Contact.html" class="contact-btn">📞 Contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- PAGE INNER -->
+  <div class="page-inner">
+
+    <!-- PAGE HERO -->
+    <div class="page-hero" data-aos="fade-up" data-aos-duration="800">
+      <div class="hero-badge">🔥 Trending Now</div>
+      <h1>Trending Movies 🎬</h1>
+      <p>Most popular movies right now &bull; Updated weekly &bull; 10+ Million Views</p>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-bar" data-aos="fade-up" data-aos-delay="80">
+      <div class="stat-item"><h3>100+</h3><p>New Movies</p></div>
+      <div class="stat-item"><h3>50K+</h3><p>Ratings</p></div>
+      <div class="stat-item"><h3>5M+</h3><p>Views This Week</p></div>
+      <div class="stat-item"><h3>⭐ 4.7</h3><p>Avg Rating</p></div>
+      <div class="stat-item"><h3>20+</h3><p>Categories</p></div>
+    </div>
+
+    <!-- SECTION HEADER -->
+    <div class="section-header" data-aos="fade-right">
+      <h2>🎥 Browse by Genre</h2>
+    </div>
+
+    <!-- CATEGORY TABS -->
+    <div class="category-tabs" data-aos="fade-up" data-aos-delay="50">
+      <button class="category-btn active" data-cat="all">All</button>
+      <button class="category-btn" data-cat="action">Action</button>
+      <button class="category-btn" data-cat="comedy">Comedy</button>
+      <button class="category-btn" data-cat="sci-fi">Sci-Fi</button>
+      <button class="category-btn" data-cat="animation">Animation</button>
+      <button class="category-btn" data-cat="thriller">Thriller</button>
+      <button class="category-btn" data-cat="drama">Drama</button>
+      <button class="category-btn" data-cat="horror">Horror</button>
+      <button class="category-btn" data-cat="adventure">Adventure</button>
+      <button class="category-btn" data-cat="crime">Crime</button>
+    </div>
+
+    <!-- MOVIES GRID -->
+    <div class="movies-grid" id="moviesGrid">
+
+      <!-- Movie 1 -->
+      <div class="movie-card" data-genre="action comedy" data-aos="zoom-in-up" data-aos-delay="0">
+        <div class="movie-poster" style="background-image: url('https://upload.wikimedia.org/wikipedia/en/4/4c/Deadpool_%26_Wolverine_poster.jpg');">
+          <div class="trending-badge">🔥 #1</div>
+          <div class="rating-badge">⭐ 4.8</div>
+          <div class="card-play-overlay"><div class="play-symbol">▶</div></div>
+        </div>
+        <div class="movie-info">
+          <h3>Deadpool &amp; Wolverine</h3>
+          <div class="movie-year">2024 | 2h 8m</div>
+          <div class="genres"><span class="genre">Action</span><span class="genre">Comedy</span></div>
+          <div class="movie-desc">Wade Wilson returns with Wolverine in an epic multiverse adventure.</div>
+          <button class="watch-btn">▶ Watch Trailer</button>
+        </div>
+      </div>
+
+      <!-- Movie 2 -->
+      <div class="movie-card" data-genre="sci-fi action" data-aos="zoom-in-up" data-aos-delay="50">
+        <div class="movie-poster" style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSzhh62IFPe6We4cHBNbqXHp4DFCRrF1YN33g&s');">
+          <div class="trending-badge">🔥 #2</div>
+          <div class="rating-badge">⭐ 4.9</div>
+          <div class="card-play-overlay"><div class="play-symbol">▶</div></div>
+        </div>
+        <div class="movie-info">
+          <h3>Kalki 2898 AD</h3>
+          <div class="movie-year">2024 | 3h 0m</div>
+          <div class="genres"><span class="genre">Sci-Fi</span><span class="genre">Action</span></div>
+          <div class="movie-desc">A modern-day avatar of Lord Vishnu descends to protect the world.</div>
+          <button class="watch-btn">▶ Watch Trailer</button>
+        </div>
+      </div>
+
+      <!-- Movie 3 -->
+      <div class="movie-card" data-genre="sci-fi adventure" data-aos="zoom-in-up" data-aos-delay="100">
+        <div class="movie-poster" style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSX2GsKVYCKL_qdyOWegmFigql2w1Hesq1kWQ&s');">
+          <div class="trending-badge">🔥 #3</div>
+          <div class="rating-badge">⭐ 4.8</div>
+          <div class="card-play-overlay"><div class="play-symbol">▶</div></div>
+        </div>
+        <div class="movie-info">
+          <h3>Dune: Part Two</h3>
+          <div class="movie-year">2024 | 2h 46m</div>
+          <div class="genres"><span class="genre">Sci-Fi</span><span class="genre">Adventure</span></div>
+          <div class="movie-desc">Paul Atreides unites with the Fremen while seeking revenge.</div>
+          <button class="watch-btn">▶ Watch Trailer</button>
+        </div>
+      </div>
+
+      <!-- Movie 4 -->
+      <div class="movie-card" data-genre="animation comedy" data-aos="zoom-in-up" data-aos-delay="150">
+        <div class="movie-poster" style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQi24ymvAtATCjLwaP3twNdm5zSiO4tlQiBSg&s');">
+          <div class="trending-badge">🔥 #4</div>
+          <div class="rating-badge">⭐ 4.6</div>
+          <div class="card-play-overlay"><div class="play-symbol">▶</div></div>
+        </div>
+        <div class="movie-info">
+          <h3>Inside Out 2</h3>
+          <div class="movie-year">2024 | 1h 36m</div>
+          <div class="genres"><span class="genre">Animation</span><span class="genre">Comedy</span></div>
+          <div class="movie-desc">Riley's emotions face new challenges in her teenage years.</div>
+          <button class="watch-btn">▶ Watch Trailer</button>
+        </div>
+      </div>
+
+      <!-- Movie 5 -->
+      <div class="movie-card" data-genre="action thriller" data-aos="zoom-in-up" data-aos-delay="0">
+        <div class="movie-poster" style="background-image: url('https://image.tmdb.org/t/p/w500/vZloFAK7NmvMGKE7VkF5UHaz0I.jpg');">
+          <div class="trending-badge">🔥 #5</div>
+          <div class="rating-badge">⭐ 4.7</div>
+          <div class="card-play-overlay"><div class="play-symbol">▶</div></div>
+        </div>
+        <div class="movie-info">
+          <h3>John Wick: Chapter 4</h3>
+          <div class="movie-year">2023 | 2h 49m</div>
+          <div class="genres"><span class="genre">Action</span><span class="genre">Thriller</span></div>
+          <div class="movie-desc">John Wick uncovers a path to defeating The High Table.</div>
+          <button class="watch-btn">▶ Watch Trailer</button>
+        </div>
+      </div>
+
+      <!-- Movie 6 -->
+      <div class="movie-card" data-genre="drama" data-aos="zoom-in-up" data-aos-delay="50">
+        <div class="movie-poster" style="background-image: url('https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg');">
+          <div class="trending-badge">🔥 #6</div>
+          <div class="rating-badge">⭐ 4.9</div>
+          <div class="card-play-overlay"><div class="play-symbol">▶</div></div>
+        </div>
+        <div class="movie-info">
+          <h3>Oppenheimer</h3>
+          <div class="movie-year">2023 | 3h 0m</div>
+          <div class="genres"><span class="genre">Drama</span><span class="genre">Biography</span></div>
+          <div class="movie-desc">The story of J. Robert Oppenheimer and the atomic bomb.</div>
+          <button class="watch-btn">▶ Watch Trailer</button>
+        </div>
+      </div>
+
+      <!-- Movie 7 -->
+      <div class="movie-card" data-genre="action thriller" data-aos="zoom-in-up" data-aos-delay="100">
+        <div class="movie-poster" style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTynnb6n39TukYgh2TT-3heupewRg4i3k8wfw&s');">
+          <div class="trending-badge">🔥 #7</div>
+          <div class="rating-badge">⭐ 4.5</div>
+          <div class="card-play-overlay"><div class="play-symbol">▶</div></div>
+        </div>
+        <div class="movie-info">
+          <h3>Fighter</h3>
+          <div class="movie-year">2024 | 2h 46m</div>
+          <div class="genres"><span class="genre">Action</span><span class="genre">Thriller</span></div>
+          <div class="movie-desc">Top Indian Air Force pilots unite against terrorism.</div>
+          <button class="watch-btn">▶ Watch Trailer</button>
+        </div>
+      </div>
+
+      <!-- Movie 8 -->
+      <div class="movie-card" data-genre="action sci-fi" data-aos="zoom-in-up" data-aos-delay="150">
+        <div class="movie-poster" style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRiKLeT_4KSIhue__uPrnwGwdTAuUHq1Qll2w&s');">
+          <div class="trending-badge">🔥 #8</div>
+          <div class="rating-badge">⭐ 4.4</div>
+          <div class="card-play-overlay"><div class="play-symbol">▶</div></div>
+        </div>
+        <div class="movie-info">
+          <h3>Godzilla x Kong</h3>
+          <div class="movie-year">2024 | 1h 55m</div>
+          <div class="genres"><span class="genre">Action</span><span class="genre">Sci-Fi</span></div>
+          <div class="movie-desc">Two ancient titans clash in an epic battle.</div>
+          <button class="watch-btn">▶ Watch Trailer</button>
+        </div>
+      </div>
+
+      <!-- Movie 9 -->
+      <div class="movie-card" data-genre="horror thriller" data-aos="zoom-in-up" data-aos-delay="0">
+        <div class="movie-poster" style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQt4SEKCxf63Le-hMTYfmlaK-sHEiNHN9Fb4A&s');">
+          <div class="trending-badge">🔥 #9</div>
+          <div class="rating-badge">⭐ 4.3</div>
+          <div class="card-play-overlay"><div class="play-symbol">▶</div></div>
+        </div>
+        <div class="movie-info">
+          <h3>Smile 2</h3>
+          <div class="movie-year">2024 | 2h 12m</div>
+          <div class="genres"><span class="genre">Horror</span><span class="genre">Thriller</span></div>
+          <div class="movie-desc">A sinister curse spreads through a pop star's world tour.</div>
+          <button class="watch-btn">▶ Watch Trailer</button>
+        </div>
+      </div>
+
+      <!-- Movie 10 -->
+      <div class="movie-card" data-genre="crime drama" data-aos="zoom-in-up" data-aos-delay="50">
+        <div class="movie-poster" style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRFkMF8gYQTo3NlJ_RDo0RaWFgpYlKLnLIjdA&s');">
+          <div class="trending-badge">🔥 #10</div>
+          <div class="rating-badge">⭐ 4.7</div>
+          <div class="card-play-overlay"><div class="play-symbol">▶</div></div>
+        </div>
+        <div class="movie-info">
+          <h3>The Batman - Part II</h3>
+          <div class="movie-year">2025 | 2h 50m</div>
+          <div class="genres"><span class="genre">Crime</span><span class="genre">Drama</span></div>
+          <div class="movie-desc">Batman continues his war on crime in Gotham City.</div>
+          <button class="watch-btn">▶ Watch Trailer</button>
+        </div>
+      </div>
+
+      <!-- Movie 11 -->
+      <div class="movie-card" data-genre="animation adventure" data-aos="zoom-in-up" data-aos-delay="100">
+        <div class="movie-poster" style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNZW3_7hZXCpYXGWMqhjK47-I4xCeROWuzqA&s');">
+          <div class="trending-badge">🔥 #11</div>
+          <div class="rating-badge">⭐ 4.5</div>
+          <div class="card-play-overlay"><div class="play-symbol">▶</div></div>
+        </div>
+        <div class="movie-info">
+          <h3>The Wild Robot</h3>
+          <div class="movie-year">2024 | 1h 42m</div>
+          <div class="genres"><span class="genre">Animation</span><span class="genre">Adventure</span></div>
+          <div class="movie-desc">A robot learns to survive in the wilderness.</div>
+          <button class="watch-btn">▶ Watch Trailer</button>
+        </div>
+      </div>
+
+      <!-- Movie 12 -->
+      <div class="movie-card" data-genre="action adventure" data-aos="zoom-in-up" data-aos-delay="150">
+        <div class="movie-poster" style="background-image: url('https://upload.wikimedia.org/wikipedia/en/8/8f/Fast_and_Furious_Poster.jpg');">
+          <div class="trending-badge">🔥 #12</div>
+          <div class="rating-badge">⭐ 4.4</div>
+          <div class="card-play-overlay"><div class="play-symbol">▶</div></div>
+        </div>
+        <div class="movie-info">
+          <h3>Fast &amp; Furious XI</h3>
+          <div class="movie-year">2025 | 2h 20m</div>
+          <div class="genres"><span class="genre">Action</span><span class="genre">Adventure</span></div>
+          <div class="movie-desc">The final chapter of the Fast saga.</div>
+          <button class="watch-btn">▶ Watch Trailer</button>
+        </div>
+      </div>
+
+      <!-- Movie 13 -->
+      <div class="movie-card" data-genre="sci-fi adventure" data-aos="zoom-in-up" data-aos-delay="0">
+        <div class="movie-poster" style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcROMCy4FdcPh7rkj9hUnboGkgTsn9D26hV7SQ&s');">
+          <div class="trending-badge">🔥 #13</div>
+          <div class="rating-badge">⭐ 4.6</div>
+          <div class="card-play-overlay"><div class="play-symbol">▶</div></div>
+        </div>
+        <div class="movie-info">
+          <h3>Furiosa: A Mad Max Saga</h3>
+          <div class="movie-year">2024 | 2h 28m</div>
+          <div class="genres"><span class="genre">Sci-Fi</span><span class="genre">Adventure</span></div>
+          <div class="movie-desc">The origin story of Furiosa from Mad Max.</div>
+          <button class="watch-btn">▶ Watch Trailer</button>
+        </div>
+      </div>
+
+      <!-- Movie 14 -->
+      <div class="movie-card" data-genre="horror thriller" data-aos="zoom-in-up" data-aos-delay="50">
+        <div class="movie-poster" style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQiaeVizjup6Q-xFTf5_xbJYMIQ2XQvlnrxvw&s');">
+          <div class="trending-badge">🔥 #14</div>
+          <div class="rating-badge">⭐ 4.5</div>
+          <div class="card-play-overlay"><div class="play-symbol">▶</div></div>
+        </div>
+        <div class="movie-info">
+          <h3>A Quiet Place: Day One</h3>
+          <div class="movie-year">2024 | 1h 40m</div>
+          <div class="genres"><span class="genre">Horror</span><span class="genre">Thriller</span></div>
+          <div class="movie-desc">The day the world went silent.</div>
+          <button class="watch-btn">▶ Watch Trailer</button>
+        </div>
+      </div>
+
+      <!-- Movie 15 -->
+      <div class="movie-card" data-genre="action adventure" data-aos="zoom-in-up" data-aos-delay="100">
+        <div class="movie-poster" style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6snPvGpfuAqwpvZnFPFt5qP8hAtja3AdV9A&s');">
+          <div class="trending-badge">🔥 #15</div>
+          <div class="rating-badge">⭐ 4.4</div>
+          <div class="card-play-overlay"><div class="play-symbol">▶</div></div>
+        </div>
+        <div class="movie-info">
+          <h3>Indiana Jones 5</h3>
+          <div class="movie-year">2023 | 2h 34m</div>
+          <div class="genres"><span class="genre">Action</span><span class="genre">Adventure</span></div>
+          <div class="movie-desc">Indy's final adventure begins.</div>
+          <button class="watch-btn">▶ Watch Trailer</button>
+        </div>
+      </div>
+
+      <!-- Movie 16 -->
+      <div class="movie-card" data-genre="action thriller" data-aos="zoom-in-up" data-aos-delay="150">
+        <div class="movie-poster" style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTjWdsUD7YMJATGCoh94urh0atbjrlJxGY3YQ&s');">
+          <div class="trending-badge">🔥 #16</div>
+          <div class="rating-badge">⭐ 4.8</div>
+          <div class="card-play-overlay"><div class="play-symbol">▶</div></div>
+        </div>
+        <div class="movie-info">
+          <h3>Mission Impossible 8</h3>
+          <div class="movie-year">2025 | 2h 45m</div>
+          <div class="genres"><span class="genre">Action</span><span class="genre">Thriller</span></div>
+          <div class="movie-desc">Ethan Hunt's final mission.</div>
+          <button class="watch-btn">▶ Watch Trailer</button>
+        </div>
+      </div>
+
+      <!-- Movie 17 -->
+      <div class="movie-card" data-genre="comedy romance" data-aos="zoom-in-up" data-aos-delay="0">
+        <div class="movie-poster" style="background-image: url('https://preview.redd.it/anyone-but-you-review-v0-gdvfwogtiz7c1.jpeg?auto=webp&s=8c6a1a77fdf6ff94a299fb86792624530d2096f5');">
+          <div class="trending-badge">🔥 #17</div>
+          <div class="rating-badge">⭐ 4.3</div>
+          <div class="card-play-overlay"><div class="play-symbol">▶</div></div>
+        </div>
+        <div class="movie-info">
+          <h3>Anyone But You</h3>
+          <div class="movie-year">2023 | 1h 43m</div>
+          <div class="genres"><span class="genre">Comedy</span><span class="genre">Romance</span></div>
+          <div class="movie-desc">Two enemies pretend to be a couple.</div>
+          <button class="watch-btn">▶ Watch Trailer</button>
+        </div>
+      </div>
+
+      <!-- Movie 18 -->
+      <div class="movie-card" data-genre="drama" data-aos="zoom-in-up" data-aos-delay="50">
+        <div class="movie-poster" style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSzYZP5M42TDeK8CilEEwOV-8nIdpLfl1fC-w&s');">
+          <div class="trending-badge">🔥 #18</div>
+          <div class="rating-badge">⭐ 4.6</div>
+          <div class="card-play-overlay"><div class="play-symbol">▶</div></div>
+        </div>
+        <div class="movie-info">
+          <h3>Napoleon</h3>
+          <div class="movie-year">2023 | 2h 38m</div>
+          <div class="genres"><span class="genre">Drama</span><span class="genre">History</span></div>
+          <div class="movie-desc">The rise and fall of Napoleon Bonaparte.</div>
+          <button class="watch-btn">▶ Watch Trailer</button>
+        </div>
+      </div>
+
+      <!-- Movie 19 -->
+      <div class="movie-card" data-genre="action adventure" data-aos="zoom-in-up" data-aos-delay="100">
+        <div class="movie-poster" style="background-image: url('https://upload.wikimedia.org/wikipedia/en/thumb/4/4a/Aquaman_and_the_Lost_Kingdom_poster.jpg/250px-Aquaman_and_the_Lost_Kingdom_poster.jpg');">
+          <div class="trending-badge">🔥 #19</div>
+          <div class="rating-badge">⭐ 4.5</div>
+          <div class="card-play-overlay"><div class="play-symbol">▶</div></div>
+        </div>
+        <div class="movie-info">
+          <h3>Aquaman 2</h3>
+          <div class="movie-year">2023 | 2h 4m</div>
+          <div class="genres"><span class="genre">Action</span><span class="genre">Adventure</span></div>
+          <div class="movie-desc">Aquaman faces his greatest challenge yet.</div>
+          <button class="watch-btn">▶ Watch Trailer</button>
+        </div>
+      </div>
+
+      <!-- Movie 20 -->
+      <div class="movie-card" data-genre="comedy drama" data-aos="zoom-in-up" data-aos-delay="150">
+        <div class="movie-poster" style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSP_1XynQJwf07y9gK2OUEfTH5jJk55U3kk0w&s');">
+          <div class="trending-badge">🔥 #20</div>
+          <div class="rating-badge">⭐ 4.4</div>
+          <div class="card-play-overlay"><div class="play-symbol">▶</div></div>
+        </div>
+        <div class="movie-info">
+          <h3>The Holdovers</h3>
+          <div class="movie-year">2023 | 2h 13m</div>
+          <div class="genres"><span class="genre">Comedy</span><span class="genre">Drama</span></div>
+          <div class="movie-desc">A teacher forms an unlikely bond with students.</div>
+          <button class="watch-btn">▶ Watch Trailer</button>
+        </div>
+      </div>
+
+    </div><!-- /movies-grid -->
+
+    <!-- NEWSLETTER -->
+    <div class="newsletter-section" data-aos="fade-up">
+      <h2>🎙️ Join the Primal Wave</h2>
+      <p>Get weekly movie recommendations, release dates, and exclusive content!</p>
+      <div class="newsletter-form">
+        <input type="email" class="newsletter-input" placeholder="Enter your email" id="newsletterEmail">
+        <button class="newsletter-btn" id="subscribeBtn">Subscribe → </button>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer-section">
+      <p style="color:#7a6ea0; font-size:0.85rem;">© 2025 EntertainHub — Where Fun Never Ends &nbsp;❤️&nbsp; 100+ Movies &amp; Shows</p>
+      <div class="footer-links">
+        <a href="#">Help</a>
+        <a href="#">FAQ</a>
+        <a href="#">Terms</a>
+        <a href="#">Privacy</a>
+        <a href="#">Contact Support</a>
+        <a href="#">Gift Cards</a>
+        <a href="#">Media Centre</a>
+        <a href="#">Investor Relations</a>
+        <a href="#">Speed Test</a>
+        <a href="Contact.html">📞 Contact Us 24/7</a>
+      </div>
+      <div class="copy">Follow us for daily movie updates and reviews</div>
+    </div>
+
+  </div><!-- /page-inner -->
+
+</div><!-- /app -->
+
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+  AOS.init({ duration: 700, once: true, offset: 20, easing: 'ease-out-quad' });
+
+  // Category Filter
+  const categoryBtns = document.querySelectorAll('.category-btn');
+  const movieCards = document.querySelectorAll('.movie-card');
+
+  categoryBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      categoryBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const category = btn.getAttribute('data-cat');
+      movieCards.forEach(card => {
+        if (category === 'all') {
+          card.style.display = '';
+        } else {
+          const genres = card.getAttribute('data-genre') || '';
+          card.style.display = genres.includes(category) ? '' : 'none';
+        }
+      });
+    });
+  });
+
+  // Watch Trailer Buttons
+  document.querySelectorAll('.watch-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const title = btn.closest('.movie-card').querySelector('h3').innerText;
+      alert('🎬 Now playing trailer for "' + title + '"!\n\nGet ready for an amazing cinematic experience! 🍿');
+    });
+  });
+
+  // Movie card click
+  movieCards.forEach(card => {
+    card.addEventListener('click', () => {
+      const title = card.querySelector('h3').innerText;
+      alert('✨ "' + title + '"\n\nClick on "Watch Trailer" to see the preview! ⭐');
+    });
+  });
+
+  // Newsletter
+  document.getElementById('subscribeBtn').addEventListener('click', () => {
+    const email = document.getElementById('newsletterEmail').value.trim();
+    if (email && email.includes('@') && email.includes('.')) {
+      alert('📧 Thanks for subscribing with ' + email + '!\nYou\'ll receive weekly movie updates. 🎬');
+      document.getElementById('newsletterEmail').value = '';
+    } else {
+      document.getElementById('newsletterEmail').style.borderColor = '#ff4d8a';
+      setTimeout(() => { document.getElementById('newsletterEmail').style.borderColor = ''; }, 1500);
+    }
+  });
+</script>
+</body>
+</html>
