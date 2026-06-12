@@ -3,508 +3,77 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-  <title>EntertainHub — Contact Us | Support & Inquiries</title>
+  <title>EntertainHub — Contact Us | Support &amp; Inquiries</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      background: #0a0612;
-      font-family: 'Inter', 'Helvetica Neue', system-ui, -apple-system, sans-serif;
-      color: #f0eaff;
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    /* animated gradient background matching the theme */
-    .bg-mystic {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      background: radial-gradient(ellipse at 25% 20%, #1a0f2e, #05020a);
-      overflow: hidden;
-    }
-
-    .bg-mystic::before {
-      content: '';
-      position: absolute;
-      top: -30%;
-      left: -20%;
-      width: 140%;
-      height: 140%;
-      background: radial-gradient(circle at 30% 40%, rgba(155, 77, 255, 0.12), transparent 65%);
-      animation: auraFloat 20s ease infinite alternate;
-    }
-
-    .bg-mystic::after {
-      content: '';
-      position: absolute;
-      bottom: -30%;
-      right: -20%;
-      width: 130%;
-      height: 130%;
-      background: radial-gradient(circle at 70% 60%, rgba(229, 9, 20, 0.08), transparent 70%);
-      animation: auraFloat2 24s ease infinite alternate;
-    }
-
-    @keyframes auraFloat {
-      0% { transform: translate(0%, 0%) scale(1); opacity: 0.4; }
-      100% { transform: translate(4%, 6%) scale(1.2); opacity: 0.8; }
-    }
-
-    @keyframes auraFloat2 {
-      0% { transform: translate(0%, 0%) scale(1); opacity: 0.3; }
-      100% { transform: translate(-5%, -4%) scale(1.25); opacity: 0.7; }
-    }
-
-    /* floating orbs */
-    .orb {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(70px);
-      opacity: 0.25;
-      animation: drift 16s infinite alternate ease-in-out;
-    }
-
-    @keyframes drift {
-      0% { transform: translateY(0px) translateX(0px) scale(1); }
-      100% { transform: translateY(-35px) translateX(25px) scale(1.08); }
-    }
-
-    /* navbar */
-    .navbar {
-      position: relative;
-      z-index: 50;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1.4rem 3rem;
-      max-width: 1400px;
-      margin: 0 auto;
-      animation: fadeInDown 0.6s ease;
-    }
-
-    .logo {
-      font-size: 1.7rem;
-      font-weight: 800;
-      letter-spacing: -0.5px;
-      background: linear-gradient(135deg, #E50914, #ff6b6b, #b77cff, #E50914);
-      background-size: 300% 300%;
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      animation: gradientFlow 5s ease infinite;
-      cursor: pointer;
-      transition: transform 0.3s;
-      text-decoration: none;
-    }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0a0612; font-family: 'Inter', 'Helvetica Neue', system-ui, -apple-system, sans-serif; color: #f0eaff; min-height: 100vh; overflow-x: hidden; }
+    .bg-mystic { position: fixed; inset: 0; z-index: 0; background: radial-gradient(ellipse at 25% 20%, #1a0f2e, #05020a); overflow: hidden; }
+    .bg-mystic::before { content: ''; position: absolute; top: -30%; left: -20%; width: 140%; height: 140%; background: radial-gradient(circle at 30% 40%, rgba(155,77,255,0.12), transparent 65%); animation: auraFloat 20s ease infinite alternate; }
+    .bg-mystic::after { content: ''; position: absolute; bottom: -30%; right: -20%; width: 130%; height: 130%; background: radial-gradient(circle at 70% 60%, rgba(229,9,20,0.08), transparent 70%); animation: auraFloat2 24s ease infinite alternate; }
+    @keyframes auraFloat { 0% { transform: translate(0%,0%) scale(1); opacity:.4; } 100% { transform: translate(4%,6%) scale(1.2); opacity:.8; } }
+    @keyframes auraFloat2 { 0% { transform: translate(0%,0%) scale(1); opacity:.3; } 100% { transform: translate(-5%,-4%) scale(1.25); opacity:.7; } }
+    .orb { position: absolute; border-radius: 50%; filter: blur(70px); opacity: 0.25; animation: drift 16s infinite alternate ease-in-out; }
+    @keyframes drift { 0% { transform: translateY(0px) translateX(0px) scale(1); } 100% { transform: translateY(-35px) translateX(25px) scale(1.08); } }
+    .navbar { position: relative; z-index: 50; display: flex; justify-content: space-between; align-items: center; padding: 1.4rem 3rem; max-width: 1400px; margin: 0 auto; animation: fadeInDown 0.6s ease; }
+    .logo { font-size: 1.7rem; font-weight: 800; letter-spacing: -0.5px; background: linear-gradient(135deg, #E50914, #ff6b6b, #b77cff, #E50914); background-size: 300% 300%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: gradientFlow 5s ease infinite; cursor: pointer; transition: transform 0.3s; text-decoration: none; }
     .logo:hover { transform: scale(1.03); }
-
-    @keyframes gradientFlow {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 2rem;
-      align-items: center;
-    }
-
-    .nav-links a {
-      color: #e2d6ff;
-      text-decoration: none;
-      font-weight: 500;
-      transition: 0.2s;
-      position: relative;
-    }
-
-    .nav-links a::after {
-      content: '';
-      position: absolute;
-      bottom: -4px;
-      left: 0;
-      width: 0;
-      height: 2px;
-      background: #b77cff;
-      transition: width 0.25s ease;
-    }
-
+    @keyframes gradientFlow { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+    .nav-links { display: flex; gap: 2rem; align-items: center; }
+    .nav-links a { color: #e2d6ff; text-decoration: none; font-weight: 500; transition: 0.2s; position: relative; }
+    .nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 2px; background: #b77cff; transition: width 0.25s ease; }
     .nav-links a:hover::after { width: 100%; }
     .nav-links a:hover { color: #ffffff; }
-
-    /* main container */
-    .page {
-      position: relative;
-      z-index: 10;
-      min-height: calc(100vh - 85px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem 1.5rem 4rem;
-    }
-
-    /* glass card double layout */
-    .contact-wrapper {
-      max-width: 1300px;
-      width: 100%;
-      display: grid;
-      grid-template-columns: 1fr 1.2fr;
-      gap: 2rem;
-      animation: fadeScale 0.7s cubic-bezier(0.2, 0.9, 0.4, 1.1) both;
-    }
-
-    @keyframes fadeScale {
-      from { opacity: 0; transform: scale(0.96) translateY(20px); }
-      to { opacity: 1; transform: scale(1) translateY(0); }
-    }
-
-    /* info card */
-    .info-card {
-      background: rgba(12, 8, 20, 0.7);
-      backdrop-filter: blur(16px);
-      border-radius: 32px;
-      border: 1px solid rgba(183, 124, 255, 0.28);
-      padding: 2rem 2rem;
-      transition: transform 0.3s, box-shadow 0.3s;
-    }
-
-    .info-card:hover {
-      box-shadow: 0 25px 45px -15px rgba(155, 77, 255, 0.25);
-      border-color: rgba(183, 124, 255, 0.5);
-    }
-
-    .info-header {
-      margin-bottom: 2rem;
-    }
-
-    .info-header .badge {
-      display: inline-block;
-      background: rgba(229, 9, 20, 0.15);
-      border: 1px solid rgba(229, 9, 20, 0.4);
-      border-radius: 60px;
-      padding: 0.3rem 1rem;
-      font-size: 0.75rem;
-      font-weight: 700;
-      color: #ff8080;
-      margin-bottom: 1rem;
-    }
-
-    .info-card h2 {
-      font-size: 1.8rem;
-      font-weight: 800;
-      background: linear-gradient(125deg, #fff, #d6b0ff);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      margin-bottom: 0.5rem;
-    }
-
-    .info-card p {
-      color: #b8a9e6;
-      line-height: 1.5;
-    }
-
-    .contact-details {
-      margin: 2rem 0 2rem;
-    }
-
-    .detail-item {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      padding: 1rem 0;
-      border-bottom: 1px solid rgba(183, 124, 255, 0.15);
-      transition: transform 0.2s;
-    }
-
-    .detail-item:hover {
-      transform: translateX(6px);
-    }
-
-    .detail-icon {
-      width: 48px;
-      height: 48px;
-      background: rgba(183, 124, 255, 0.12);
-      border-radius: 28px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.4rem;
-    }
-
-    .detail-text h4 {
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: #cdb5ff;
-      margin-bottom: 0.2rem;
-    }
-
-    .detail-text p, .detail-text a {
-      color: #f0eaff;
-      text-decoration: none;
-      font-size: 0.95rem;
-      transition: color 0.2s;
-    }
-
+    .page { position: relative; z-index: 10; min-height: calc(100vh - 85px); display: flex; align-items: center; justify-content: center; padding: 2rem 1.5rem 4rem; }
+    .contact-wrapper { max-width: 1300px; width: 100%; display: grid; grid-template-columns: 1fr 1.2fr; gap: 2rem; animation: fadeScale 0.7s cubic-bezier(0.2,0.9,0.4,1.1) both; }
+    @keyframes fadeScale { from { opacity:0; transform:scale(0.96) translateY(20px); } to { opacity:1; transform:scale(1) translateY(0); } }
+    .info-card { background: rgba(12,8,20,0.7); backdrop-filter: blur(16px); border-radius: 32px; border: 1px solid rgba(183,124,255,0.28); padding: 2rem; transition: transform 0.3s, box-shadow 0.3s; }
+    .info-card:hover { box-shadow: 0 25px 45px -15px rgba(155,77,255,0.25); border-color: rgba(183,124,255,0.5); }
+    .info-header { margin-bottom: 2rem; }
+    .info-header .badge { display: inline-block; background: rgba(229,9,20,0.15); border: 1px solid rgba(229,9,20,0.4); border-radius: 60px; padding: 0.3rem 1rem; font-size: 0.75rem; font-weight: 700; color: #ff8080; margin-bottom: 1rem; }
+    .info-card h2 { font-size: 1.8rem; font-weight: 800; background: linear-gradient(125deg,#fff,#d6b0ff); -webkit-background-clip: text; background-clip: text; color: transparent; margin-bottom: 0.5rem; }
+    .info-card p { color: #b8a9e6; line-height: 1.5; }
+    .contact-details { margin: 2rem 0; }
+    .detail-item { display: flex; align-items: center; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid rgba(183,124,255,0.15); transition: transform 0.2s; }
+    .detail-item:hover { transform: translateX(6px); }
+    .detail-icon { width: 48px; height: 48px; background: rgba(183,124,255,0.12); border-radius: 28px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; flex-shrink: 0; }
+    .detail-text h4 { font-size: 0.9rem; font-weight: 600; color: #cdb5ff; margin-bottom: 0.2rem; }
+    .detail-text p, .detail-text a { color: #f0eaff; text-decoration: none; font-size: 0.95rem; transition: color 0.2s; }
     .detail-text a:hover { color: #b77cff; }
+    .social-links { display: flex; gap: 1rem; margin-top: 1.8rem; }
+    .social-icon { width: 44px; height: 44px; background: rgba(30,22,55,0.8); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; transition: all 0.25s; cursor: pointer; border: 1px solid rgba(183,124,255,0.3); }
+    .social-icon:hover { background: #b77cff; transform: translateY(-4px); border-color: #b77cff; }
+    .form-card { background: rgba(12,8,20,0.7); backdrop-filter: blur(16px); border-radius: 32px; border: 1px solid rgba(183,124,255,0.28); padding: 2rem; transition: transform 0.3s, box-shadow 0.3s; }
+    .form-card:hover { box-shadow: 0 25px 45px -15px rgba(155,77,255,0.25); }
+    .form-card h3 { font-size: 1.5rem; font-weight: 700; margin-bottom: 0.3rem; }
+    .form-sub { color: #a295c9; margin-bottom: 1.2rem; font-size: 0.85rem; }
 
-    .social-links {
-      display: flex;
-      gap: 1rem;
-      margin-top: 1.8rem;
-    }
-
-    .social-icon {
-      width: 44px;
-      height: 44px;
-      background: rgba(30, 22, 55, 0.8);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.2rem;
-      transition: all 0.25s;
-      cursor: pointer;
-      border: 1px solid rgba(183, 124, 255, 0.3);
-    }
-
-    .social-icon:hover {
-      background: #b77cff;
-      transform: translateY(-4px);
-      border-color: #b77cff;
-      color: #0a0612;
-    }
-
-    /* form card */
-    .form-card {
-      background: rgba(12, 8, 20, 0.7);
-      backdrop-filter: blur(16px);
-      border-radius: 32px;
-      border: 1px solid rgba(183, 124, 255, 0.28);
-      padding: 2rem 2rem;
-      transition: transform 0.3s, box-shadow 0.3s;
-    }
-
-    .form-card:hover {
-      box-shadow: 0 25px 45px -15px rgba(155, 77, 255, 0.25);
-    }
-
-    .form-card h3 {
-      font-size: 1.5rem;
-      font-weight: 700;
-      margin-bottom: 0.3rem;
-    }
-
-    .form-card .form-sub {
-      color: #a295c9;
-      margin-bottom: 1.8rem;
-      font-size: 0.85rem;
-    }
-
-    .input-group {
-      margin-bottom: 1.2rem;
-    }
-
-    .input-group label {
-      display: block;
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: #b8a9e6;
-      margin-bottom: 0.4rem;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .input-wrap {
-      position: relative;
-    }
-
-    .input-icon {
-      position: absolute;
-      left: 16px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 1rem;
-      color: #8b78b0;
-      pointer-events: none;
-    }
-
-    .input-wrap input,
-    .input-wrap textarea {
-      width: 100%;
-      background: rgba(20, 14, 35, 0.8);
-      border: 1px solid rgba(183, 124, 255, 0.3);
-      border-radius: 20px;
-      padding: 0.9rem 1rem 0.9rem 2.8rem;
-      color: #fff;
-      font-size: 0.95rem;
-      outline: none;
-      transition: all 0.25s;
-      font-family: inherit;
-    }
-
-    .input-wrap textarea {
-      padding-top: 0.9rem;
-      resize: vertical;
-      min-height: 100px;
-    }
-
-    .input-wrap input:focus,
-    .input-wrap textarea:focus {
-      border-color: #b77cff;
-      background: rgba(30, 20, 50, 0.9);
-      box-shadow: 0 0 0 3px rgba(183, 124, 255, 0.2);
-    }
-
-    .input-wrap input::placeholder,
-    .input-wrap textarea::placeholder {
-      color: #4a3a6a;
-    }
-
-    .radio-group {
-      margin: 1rem 0 1.2rem;
-    }
-
-    .radio-group label {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-right: 1.5rem;
-      font-weight: normal;
-      text-transform: none;
-      color: #c5b3f0;
-    }
-
-    .radio-group input[type="radio"] {
-      appearance: none;
-      width: 16px;
-      height: 16px;
-      border: 2px solid rgba(183, 124, 255, 0.6);
-      border-radius: 50%;
-      background: transparent;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-
-    .radio-group input[type="radio"]:checked {
-      background: #b77cff;
-      border-color: #b77cff;
-      box-shadow: inset 0 0 0 2px #0a0612;
-    }
-
-    /* submit button */
-    .submit-btn {
-      width: 100%;
-      background: linear-gradient(95deg, #E50914, #b44aff);
-      border: none;
-      border-radius: 40px;
-      padding: 0.95rem;
-      color: white;
-      font-size: 1rem;
-      font-weight: 700;
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
-      transition: transform 0.2s, box-shadow 0.3s;
-      margin-top: 0.5rem;
-    }
-
-    .submit-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 28px rgba(229, 9, 20, 0.4);
-    }
-
-    .btn-content {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-
-    .spinner {
-      width: 18px;
-      height: 18px;
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      border-top-color: white;
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-      display: none;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    /* success toast */
-    .toast {
-      position: fixed;
-      bottom: 2rem;
-      left: 50%;
-      transform: translateX(-50%) translateY(100px);
-      background: #1c142e;
-      border: 1px solid rgba(183, 124, 255, 0.6);
-      border-radius: 60px;
-      padding: 0.75rem 2rem;
-      font-size: 0.9rem;
-      font-weight: 500;
-      z-index: 999;
-      transition: transform 0.4s ease, opacity 0.3s;
-      opacity: 0;
-      backdrop-filter: blur(10px);
-      white-space: nowrap;
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
-    }
-
-    .toast.show {
-      transform: translateX(-50%) translateY(0);
-      opacity: 1;
-    }
-
-    /* ripple */
-    .ripple {
-      position: absolute;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.35);
-      animation: rippleAnim 0.6s linear forwards;
-      pointer-events: none;
-    }
-
-    @keyframes rippleAnim {
-      from { transform: scale(0); opacity: 0.6; }
-      to { transform: scale(4); opacity: 0; }
-    }
-
-    @keyframes fadeInDown {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* map placeholder */
-    .map-placeholder {
-      margin-top: 1.8rem;
-      background: rgba(0, 0, 0, 0.3);
-      border-radius: 24px;
-      padding: 1rem;
-      text-align: center;
-      border: 1px dashed rgba(183, 124, 255, 0.3);
-    }
-
-    .map-placeholder span {
-      font-size: 0.8rem;
-      color: #a07ad0;
-    }
-
+    .input-group { margin-bottom: 1.2rem; }
+    .input-group label { display: block; font-size: 0.75rem; font-weight: 600; color: #b8a9e6; margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.5px; }
+    .input-wrap { position: relative; }
+    .input-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); font-size: 1rem; color: #8b78b0; pointer-events: none; }
+    .input-wrap input, .input-wrap textarea { width: 100%; background: rgba(20,14,35,0.8); border: 1px solid rgba(183,124,255,0.3); border-radius: 20px; padding: 0.9rem 1rem 0.9rem 2.8rem; color: #fff; font-size: 0.95rem; outline: none; transition: all 0.25s; font-family: inherit; }
+    .input-wrap textarea { padding-top: 0.9rem; resize: vertical; min-height: 100px; }
+    .input-wrap input:focus, .input-wrap textarea:focus { border-color: #b77cff; background: rgba(30,20,50,0.9); box-shadow: 0 0 0 3px rgba(183,124,255,0.2); }
+    .input-wrap input::placeholder, .input-wrap textarea::placeholder { color: #4a3a6a; }
+    .radio-group { margin: 1rem 0 1.2rem; }
+    .radio-group label { display: inline-flex; align-items: center; gap: 0.5rem; margin-right: 1.5rem; font-weight: normal; text-transform: none; color: #c5b3f0; font-size: 0.9rem; }
+    .radio-group input[type="radio"] { appearance: none; width: 16px; height: 16px; border: 2px solid rgba(183,124,255,0.6); border-radius: 50%; background: transparent; cursor: pointer; transition: 0.2s; flex-shrink: 0; }
+    .radio-group input[type="radio"]:checked { background: #b77cff; border-color: #b77cff; box-shadow: inset 0 0 0 2px #0a0612; }
+    .submit-btn { width: 100%; background: linear-gradient(95deg, #E50914, #b44aff); border: none; border-radius: 40px; padding: 0.95rem; color: white; font-size: 1rem; font-weight: 700; cursor: pointer; position: relative; overflow: hidden; transition: transform 0.2s, box-shadow 0.3s; margin-top: 0.5rem; }
+    .submit-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(229,9,20,0.4); }
+    .submit-btn:disabled { opacity: 0.65; cursor: not-allowed; }
+    .btn-content { display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .spinner { width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; display: none; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(100px); background: #1c142e; border: 1px solid rgba(183,124,255,0.6); border-radius: 60px; padding: 0.75rem 2rem; font-size: 0.9rem; font-weight: 500; z-index: 999; transition: transform 0.4s ease, opacity 0.3s; opacity: 0; backdrop-filter: blur(10px); white-space: nowrap; box-shadow: 0 8px 25px rgba(0,0,0,0.4); }
+    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+    .ripple { position: absolute; border-radius: 50%; background: rgba(255,255,255,0.35); animation: rippleAnim 0.6s linear forwards; pointer-events: none; }
+    @keyframes rippleAnim { from { transform:scale(0); opacity:.6; } to { transform:scale(4); opacity:0; } }
+    @keyframes fadeInDown { from { opacity:0; transform:translateY(-20px); } to { opacity:1; transform:translateY(0); } }
+    .map-placeholder { margin-top: 1.8rem; background: rgba(0,0,0,0.3); border-radius: 24px; padding: 1rem; text-align: center; border: 1px dashed rgba(183,124,255,0.3); }
+    .map-placeholder span { font-size: 0.8rem; color: #a07ad0; }
     @media (max-width: 880px) {
-      .contact-wrapper {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-      }
+      .contact-wrapper { grid-template-columns: 1fr; gap: 1.5rem; }
       .navbar { padding: 1rem 1.5rem; }
       .info-card, .form-card { padding: 1.5rem; }
       .toast { white-space: normal; text-align: center; min-width: 260px; }
@@ -513,16 +82,14 @@
 </head>
 <body>
 
-<!-- animated background -->
 <div class="bg-mystic">
-  <div class="orb" style="width: 450px; height: 450px; background: #b77cff; top: -120px; left: -100px; filter: blur(85px); opacity: 0.2;"></div>
-  <div class="orb" style="width: 500px; height: 500px; background: #E50914; bottom: -150px; right: -80px; filter: blur(100px); opacity: 0.13;"></div>
-  <div class="orb" style="width: 350px; height: 350px; background: #9b4dff; top: 30%; left: 70%; filter: blur(75px); opacity: 0.18;"></div>
+  <div class="orb" style="width:450px;height:450px;background:#b77cff;top:-120px;left:-100px;filter:blur(85px);opacity:0.2;"></div>
+  <div class="orb" style="width:500px;height:500px;background:#E50914;bottom:-150px;right:-80px;filter:blur(100px);opacity:0.13;"></div>
+  <div class="orb" style="width:350px;height:350px;background:#9b4dff;top:30%;left:70%;filter:blur(75px);opacity:0.18;"></div>
 </div>
 
-<!-- navbar -->
 <div class="navbar">
-  <a href="#" class="logo" id="homeLogo">🎬 ENTERTAINHUB</a>
+  <a href="entertainhub.html" class="logo">🎬 ENTERTAINHUB</a>
   <div class="nav-links">
     <a href="entertainhub.html">Home</a>
     <a href="movies.html">Movies</a>
@@ -532,18 +99,16 @@
   </div>
 </div>
 
-<!-- main contact section -->
 <div class="page">
   <div class="contact-wrapper">
 
-    <!-- left side info -->
+    <!-- Left: Info card -->
     <div class="info-card">
       <div class="info-header">
         <span class="badge">📞 24/7 SUPPORT</span>
         <h2>Let's talk</h2>
         <p>We're here to help and answer any questions you might have. We look forward to hearing from you.</p>
       </div>
-
       <div class="contact-details">
         <div class="detail-item">
           <div class="detail-icon">📍</div>
@@ -556,206 +121,180 @@
           <div class="detail-icon">📧</div>
           <div class="detail-text">
             <h4>Email us</h4>
-            <a href="mailto:support@entertainhub.com">rafayshahkazmi8@gmail.com</a>
-            <p style="font-size:0.8rem; color:#a295c9;">Response within 24h</p>
+            <a href="mailto:rafayshahkazmiofficial@gmail.com">rafayshahkazmiofficial@gmail.com</a>
+            <p style="font-size:0.8rem;color:#a295c9;">Response within 24h</p>
           </div>
         </div>
         <div class="detail-item">
           <div class="detail-icon">📞</div>
           <div class="detail-text">
             <h4>Call center</h4>
-            <a href="tel:+923001234567">+92 3453023673</a>
-            <p style="font-size:0.8rem; color:#a295c9;">Mon-Fri, 9am–10pm</p>
+            <a href="tel:+923453023673">+92 3453023673</a>
+            <p style="font-size:0.8rem;color:#a295c9;">Mon-Fri, 9am–10pm</p>
           </div>
         </div>
       </div>
-
       <div class="social-links">
         <div class="social-icon" onclick="socialRedirect('ig')">📷</div>
         <div class="social-icon" onclick="socialRedirect('fb')">📘</div>
         <div class="social-icon" onclick="socialRedirect('tw')">🐦</div>
         <div class="social-icon" onclick="socialRedirect('yt')">📺</div>
       </div>
-
       <div class="map-placeholder">
         <span>📍 Global HQ — virtual tour available 24/7</span>
       </div>
     </div>
 
-    <!-- right side form -->
+    <!-- Right: Form card -->
     <div class="form-card">
       <h3>Send us a message</h3>
-      <div class="form-sub">We’ll reply within 24 hours, usually sooner</div>
+      <div class="form-sub">We'll reply within 24 hours, usually sooner</div>
 
-      <div class="input-group">
-        <label>FULL NAME</label>
-        <div class="input-wrap">
-          <span class="input-icon">👤</span>
-          <input type="text" id="contactName" placeholder="Syed Rafay Kazmi">
+
+      <form id="contactForm" action="https://api.web3forms.com/submit" method="POST">
+
+        <!-- Web3Forms config -->
+        <input type="hidden" name="access_key" value="8cff8c84-1b0c-498a-9003-fc973e6e8396">
+        <input type="hidden" name="subject" id="hiddenSubject">
+        <input type="hidden" name="inquiry_type" id="hiddenInquiry">
+        <input type="hidden" name="from_name" value="EntertainHub Contact Form">
+        <input type="checkbox" name="botcheck" style="display:none;">
+
+        <div class="input-group">
+          <label>FULL NAME</label>
+          <div class="input-wrap">
+            <span class="input-icon">👤</span>
+            <input type="text" name="name" id="contactName" placeholder="Syed Rafay Kazmi" required>
+          </div>
         </div>
-      </div>
 
-      <div class="input-group">
-        <label>EMAIL ADDRESS</label>
-        <div class="input-wrap">
-          <span class="input-icon">✉️</span>
-          <input type="email" id="contactEmail" placeholder="hello@example.com">
+        <div class="input-group">
+          <label>EMAIL ADDRESS</label>
+          <div class="input-wrap">
+            <span class="input-icon">✉️</span>
+            <input type="email" name="email" id="contactEmail" placeholder="hello@example.com" required>
+          </div>
         </div>
-      </div>
 
-      <div class="radio-group">
-        <label><input type="radio" name="inquiryType" value="Support" checked> 💬 Support</label>
-        <label><input type="radio" name="inquiryType" value="Partnership"> 🤝 Partnership</label>
-        <label><input type="radio" name="inquiryType" value="Feedback"> 🌟 Feedback</label>
-      </div>
-
-      <div class="input-group">
-        <label>MESSAGE</label>
-        <div class="input-wrap">
-          <textarea id="contactMsg" placeholder="Write your message here..."></textarea>
+        <div class="radio-group">
+          <label><input type="radio" name="inquiryType" value="Support" checked> 💬 Support</label>
+          <label><input type="radio" name="inquiryType" value="Partnership"> 🤝 Partnership</label>
+          <label><input type="radio" name="inquiryType" value="Feedback"> 🌟 Feedback</label>
         </div>
-      </div>
 
-      <button class="submit-btn" id="sendMessageBtn">
-        <div class="btn-content">
-          <div class="spinner" id="sendSpinner"></div>
-          <span id="sendLabel">Send Message →</span>
+        <div class="input-group">
+          <label>MESSAGE</label>
+          <div class="input-wrap">
+            <textarea name="message" id="contactMsg" placeholder="Write your message here..." required></textarea>
+          </div>
         </div>
-      </button>
 
-      <div style="margin-top: 1.2rem; font-size: 0.7rem; text-align: center; color:#6b5a8e;">
-        By sending, you agree to our privacy policy.
-      </div>
+        <button type="submit" class="submit-btn" id="sendMessageBtn">
+          <div class="btn-content">
+            <div class="spinner" id="sendSpinner"></div>
+            <span id="sendLabel">Send Message →</span>
+          </div>
+        </button>
+
+        <div style="margin-top:1.2rem;font-size:0.7rem;text-align:center;color:#6b5a8e;">
+          By sending, you agree to our privacy policy.
+        </div>
+      </form>
     </div>
+
   </div>
 </div>
 
-<div class="toast" id="toastMsg">✨ Message sent successfully</div>
+<div class="toast" id="toastMsg"></div>
 
 <script>
-  // Ripple effect utility
   function addRipple(btn, event) {
     const ripple = document.createElement('span');
     ripple.classList.add('ripple');
     const rect = btn.getBoundingClientRect();
     const size = Math.max(rect.width, rect.height);
-    const x = event.clientX - rect.left - size / 2;
-    const y = event.clientY - rect.top - size / 2;
     ripple.style.width = ripple.style.height = size + 'px';
-    ripple.style.left = x + 'px';
-    ripple.style.top = y + 'px';
+    ripple.style.left = (event.clientX - rect.left - size / 2) + 'px';
+    ripple.style.top = (event.clientY - rect.top - size / 2) + 'px';
     btn.appendChild(ripple);
     setTimeout(() => ripple.remove(), 600);
   }
 
-  // Toast notification
-  function showToast(message, isError = false) {
+  function showToast(msg, isError = false) {
     const toast = document.getElementById('toastMsg');
-    toast.textContent = message;
-    if (isError) toast.style.borderColor = '#E50914';
-    else toast.style.borderColor = '#b77cff';
+    toast.textContent = msg;
+    toast.style.borderColor = isError ? '#E50914' : '#b77cff';
     toast.classList.add('show');
-    setTimeout(() => {
-      toast.classList.remove('show');
-      if (!isError) toast.style.borderColor = '#b77cff';
-    }, 3000);
+    setTimeout(() => toast.classList.remove('show'), 3500);
   }
 
-  // Simulate sending message + loading state
+  const form = document.getElementById('contactForm');
   const sendBtn = document.getElementById('sendMessageBtn');
   const spinner = document.getElementById('sendSpinner');
   const labelSpan = document.getElementById('sendLabel');
 
-  sendBtn.addEventListener('click', async (e) => {
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
     addRipple(sendBtn, e);
-    const name = document.getElementById('contactName').value.trim();
+
+    const name  = document.getElementById('contactName').value.trim();
     const email = document.getElementById('contactEmail').value.trim();
-    const msg = document.getElementById('contactMsg').value.trim();
-    const inquiryRadios = document.querySelectorAll('input[name="inquiryType"]');
+    const msg   = document.getElementById('contactMsg').value.trim();
+
     let inquiryType = 'Support';
-    for (let radio of inquiryRadios) {
-      if (radio.checked) inquiryType = radio.value;
-    }
+    document.querySelectorAll('input[name="inquiryType"]').forEach(r => {
+      if (r.checked) inquiryType = r.value;
+    });
 
-    // validation
-    if (!name) {
-      showToast('❌ Please enter your full name', true);
-      return;
-    }
-    if (!email || !email.includes('@')) {
-      showToast('❌ Please enter a valid email address', true);
-      return;
-    }
-    if (!msg) {
-      showToast('❌ Please write your message', true);
-      return;
-    }
+    if (!name)                    { showToast('❌ Please enter your full name', true); return; }
+    if (!email || !email.includes('@')) { showToast('❌ Please enter a valid email address', true); return; }
+    if (!msg)                     { showToast('❌ Please write your message', true); return; }
 
-    // loading state
+    // Populate hidden fields
+    document.getElementById('hiddenInquiry').value = inquiryType;
+    document.getElementById('hiddenSubject').value = `EntertainHub ${inquiryType} from ${name}`;
+
     spinner.style.display = 'block';
     labelSpan.style.opacity = '0';
     sendBtn.disabled = true;
 
-    // simulate API delay
-    setTimeout(() => {
+    try {
+      const res = await fetch(form.action, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { 'Accept': 'application/json' }
+      });
+
       spinner.style.display = 'none';
       labelSpan.style.opacity = '1';
       sendBtn.disabled = false;
 
-      // reset form
-      document.getElementById('contactName').value = '';
-      document.getElementById('contactEmail').value = '';
-      document.getElementById('contactMsg').value = '';
-
-      showToast(`✅ Thanks ${name}! We've received your ${inquiryType.toLowerCase()} inquiry.`);
-    }, 1500);
-  });
-
-  // Social links simulation
-  window.socialRedirect = (platform) => {
-    let platformName = '';
-    if (platform === 'ig') platformName = 'Instagram';
-    else if (platform === 'fb') platformName = 'Facebook';
-    else if (platform === 'tw') platformName = 'Twitter';
-    else platformName = 'YouTube';
-    showToast(`🔗 Opening ${platformName} page (demo)`);
-    setTimeout(() => {
-      // simulate external redirect mock
-      console.log(`Redirect to ${platformName}`);
-    }, 600);
-  };
-
-  // Logo click returns to home (simulate)
-  document.getElementById('homeLogo')?.addEventListener('click', (e) => {
-    e.preventDefault();
-    showToast('🏠 Returning to home page...');
-    setTimeout(() => {
-      window.location.href = "entertainhub.html";
-    }, 1000);
-  });
-
-  // nav items demo actions (except current contact)
-  const navLinks = document.querySelectorAll('.nav-links a');
-  navLinks.forEach(link => {
-    if (link.id !== 'contactNavBtn' && link.getAttribute('href') !== '#') return;
-    if (!link.id === 'contactNavBtn') {
-      link.addEventListener('click', (e) => {
-        if (link.textContent.trim() !== 'Contact') {
-          e.preventDefault();
-          showToast(`✨ Exploring ${link.textContent} — coming soon`);
-        }
-      });
+      if (res.ok) {
+        form.reset();
+        showToast(`✅ Thanks ${name}! Your ${inquiryType.toLowerCase()} message has been sent.`);
+      } else {
+        const data = await res.json().catch(() => ({}));
+        const errMsg = data?.errors?.map(e => e.message).join(', ') || 'Something went wrong.';
+        showToast('❌ ' + errMsg, true);
+      }
+    } catch {
+      spinner.style.display = 'none';
+      labelSpan.style.opacity = '1';
+      sendBtn.disabled = false;
+      showToast('❌ Network error. Please try again.', true);
     }
   });
-  // ensure contact link just refreshes (already on contact page)
-  const contactNav = document.getElementById('contactNavBtn');
-  if (contactNav) {
-    contactNav.addEventListener('click', (e) => {
-      e.preventDefault();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      showToast('📞 You are on the Contact page');
-    });
-  }
+
+  window.socialRedirect = (p) => {
+    const n = { ig:'Instagram', fb:'Facebook', tw:'Twitter', yt:'YouTube' };
+    showToast('🔗 Opening ' + n[p] + ' page (demo)');
+  };
+
+  document.getElementById('contactNavBtn')?.addEventListener('click', e => {
+    e.preventDefault();
+    window.scrollTo({ top:0, behavior:'smooth' });
+    showToast('📞 You are on the Contact page');
+  });
 </script>
 </body>
 </html>
